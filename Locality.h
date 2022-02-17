@@ -1,0 +1,3 @@
+typedef enum COMPONENT_ID{
+	POSITION_C=0
+}COMPONENT_ID;

@@ -1,11 +1,15 @@
 CC=gcc
 CFLAGS=-lm
 CDEBUGFLAGS=-Wall -g
-CLIBS=-LDataContainers -lDataContainers -LSDL2-Utility -lSoftUtils -LEntity-Component-System -lEntityComponentSystem
-CFILES=main.c
+CLIBS=-LEntity-Component-System -lEntityComponentSystem -LSDL2-Utility -lSoftUtils -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_image -LDataContainers -lDataContainers
+CFILES=Locality.c Locality.h
 OUT=lrun
+
 compile:
 	$(CC) $(CFILES) $(CLIBS) $(CFLAGS) -o $(OUT)
 
 debug:
 	$(CC) $(CFILES) $(CLIBS) $(CFLAGS) $(CDEBUGFLAGS) -o $(OUT)
+
+clean:
+	rm $(OUT)
