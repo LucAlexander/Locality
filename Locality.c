@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include "Entity-Component-System/ecs.h"
 #include "SDL2-Utility/inpututils.h"
 #include "SDL2-Utility/mathutils.h"
@@ -9,14 +8,61 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
 
+VECTOR_SOURCE(vSystem, System)
+
 static Project_state state;
 
 void Project_stateInit(){
 	state.run = 1;
+	state.updateList_pre = vSystemInit();
+	state.updateList = vSystemInit();
+	state.updateList_post = vSystemInit();
+	state.renderList = vSystemInit();
+	state.programState = LOCALITY_STATE_INIT;
+}
+
+void Project_registerSystem(System* sys, PROGRAM_STATE mode){
+	switch(mode){
+		case LOCALITY_STATE_UPDATE_PRE:
+			vSystemPushBack(&(state.updateList_pre), *sys);
+		return;
+		default:
+		case LOCALITY_STATE_UPDATE:
+			vSystemPushBack(&(state.updateList), *sys);
+		return;
+		case LOCALITY_STATE_UPDATE_POST:
+			vSystemPushBack(&(state.updateList_post), *sys);
+		return;
+		case LOCALITY_STATE_RENDER:
+			vSystemPushBack(&(state.renderList), *sys);
+		return;
+	}
+}
+
+void vSystemActivate(vSystem* vec){
+	uint32_t i;
+	for (i = 0;i<vec->size;++i){
+		SystemActivate(vSystemRef(vec, i));
+	}
+}
+
+void Project_freeSystems(vSystem* systemList){
+	uint32_t i;
+	for (i = 0;i < systemList->size;++i){
+		SystemFree(vSystemRef(systemList, i));
+	}
+	vSystemFree(systemList);
+}
+
+void Project_stateExit(){
+	vSystemFree(&(state.updateList_pre));
+	vSystemFree(&(state.updateList));
+	vSystemFree(&(state.updateList_post));
+	vSystemFree(&(state.renderList));
 }
 
 void Solution_setup(){
-	ecsInit(1, sizeof(v2));
+	ecsInit(2, sizeof(v2), sizeof(Blitable)); 
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
 	view v = {
@@ -28,35 +74,32 @@ void Solution_setup(){
 }
 
 void Solution_inputEvents(){
-	if (!SDL_PollEvent(&(state.event))){
-		return;
-	}
 	switch(state.event.type){
 		case SDL_QUIT:
 			state.run = 0;
-		break;
+		return;
 		case SDL_KEYDOWN:
 			if (state.event.key.repeat == 0){
 				keyDownEvent(state.event);
 			}
-		break;
+		return;
 		case SDL_KEYUP:
 			keyUpEvent(state.event);
-		break;
+		return;
 		case SDL_MOUSEBUTTONDOWN:
 			if (!mouseHeld(state.event.button.button)){
 				mouseDownEvent(state.event);
 			}
-		break;
+		return;
 		case SDL_MOUSEBUTTONUP:
 			mouseUpEvent(state.event);
-		break;
+		return;
 		case SDL_MOUSEWHEEL:
 			mouseScrollEvent(state.event.wheel.y);
-		break;
+		return;
 		case SDL_MOUSEMOTION:
 			mouseMoveEvent(state.event.motion.x, state.event.motion.y);
-		break;
+		return;
 	}
 }
 
@@ -70,7 +113,9 @@ int main(int argc, char** argv){
 	Solution_setup();
 	SolutionLogic_init();
 	while(state.run){
-		Solution_inputEvents();
+		while (SDL_PollEvent(&(state.event))){
+			Solution_inputEvents();
+		}
 		newInputFrame();
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
@@ -82,30 +127,78 @@ int main(int argc, char** argv){
 	}
 	SolutionLogic_deinit();
 	Solution_exit();
+	Project_stateExit();
 	return 0;
 }
 
+// user code space
+
+
+
+
+
+	void testSystemFunction(SysData* sys){
+		v2* pos = componentArg(sys, 0);
+		pos->x ++;
+		pos->y --;
+		printf("%.0f, %.0f\n",pos->x, pos->y);
+	}
+
+
+
+
+
+
+
+// user code space end
+
+
 void SolutionLogic_init(){
+	state.programState = LOCALITY_STATE_INIT;
 	// SOFTWARE_STATE_INITIALIZER
+	// user code insert
+	
+	uint32_t entity = summon();
+	v2 pos = {0, 0};
+	Blitable tex;
+	addComponent(entity, POSITION_C, &pos);
+	addComponent(entity, BLITABLE_C, &tex);
+	System testSys = SystemInit(testSystemFunction, 2,
+		POSITION_C,
+		BLITABLE_C
+	);
+	SystemActivate(&testSys);
+	Project_registerSystem(&testSys, LOCALITY_STATE_RENDER);
+
+
 }
 
 void SolutionLogic_deinit(){
+	state.programState = LOCALITY_STATE_DEINIT;
 	// SOFTWARE_STATE_DESTRUCTOR
 }
 
 void SolutionLogic_update_pre(){
+	state.programState = LOCALITY_STATE_UPDATE_PRE;
 	// SOFTWARE_STATE_PREUPDATER
+	vSystemActivate(&(state.updateList_pre));
 }
 
 void SolutionLogic_update(){
+	state.programState = LOCALITY_STATE_UPDATE;
 	// SOFTWARE_STATE_UPDATER
+	vSystemActivate(&(state.updateList));
 }
 
 void SolutionLogic_update_post(){
+	state.programState = LOCALITY_STATE_UPDATE_POST;
 	// SOFTWARE_STATE_POSTUPDATER
+	vSystemActivate(&(state.updateList_post));
 }
 
 void SolutionLogic_render(){
+	state.programState = LOCALITY_STATE_RENDER;
 	// SOFTWARE_STATE_RENDERER
+	vSystemActivate(&(state.renderList));
 }
 

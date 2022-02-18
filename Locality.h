@@ -3,18 +3,42 @@
 
 #include <inttypes.h>
 #include "SDL2-Utility/graphicsutils.h"
-
+#include "DataContainers/src/vector/vector.h"
 
 typedef enum COMPONENT_ID{
-	POSITION_C=0
+	POSITION_C=0,
+	BLITABLE_C=1
 }COMPONENT_ID;
+
+struct System;
+
+VECTOR(vSystem, struct System)
+
+void vSystemActivate(vSystem* vec);
+
+typedef enum PROGRAM_STATE{
+	LOCALITY_STATE_INIT,
+	LOCALITY_STATE_DEINIT,
+	LOCALITY_STATE_UPDATE_PRE,
+	LOCALITY_STATE_UPDATE,
+	LOCALITY_STATE_UPDATE_POST,
+	LOCALITY_STATE_RENDER
+}PROGRAM_STATE;
 
 typedef struct Project_state{
 	uint8_t run;
+	vSystem updateList_pre;
+	vSystem updateList;
+	vSystem updateList_post;
+	vSystem renderList;
+	PROGRAM_STATE programState;
 	SDL_Event event;
 }Project_state;
 
 void Project_stateInit();
+void Project_registerSystem(struct System* sys, PROGRAM_STATE mode);
+void Project_freeSystems();
+void Project_stateExit();
 
 void Solution_setup();
 void Solution_inputEvents();
