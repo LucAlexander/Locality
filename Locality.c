@@ -147,20 +147,12 @@ void SolutionLogic_init(){
 	
 	uint32_t entity = summon();
 	v2 pos = {45, 45};
-	Blitable texNormal;
-	BlitableInitF(&texNormal, IMAGE_FILE "button.png", 64, 32);
-	texNormal.center.x = 0;
-	texNormal.center.y = 0;
-	Blitable texHover;
-	BlitableInitF(&texHover, IMAGE_FILE "button_hover.png", 64, 32);
-	texHover.center.x = 0;
-	texHover.center.y = 0;
-	Blitable texPress;
-	BlitableInitF(&texPress, IMAGE_FILE "button_press.png", 64, 32);
-	texPress.center.x = 0;
-	texPress.center.y = 0;
 	pressable_l pressComp;
-	pressable_l_init(&pressComp, pressActionCustom, &texNormal, &texHover, &texPress, 64, 32);
+	pressable_l_init(&pressComp, pressActionCustom,
+		IMAGE_FILE "button.png",
+		IMAGE_FILE "button_hover.png",
+		IMAGE_FILE "button_press.png",
+	64, 32);
 	addComponent(entity, POSITION_C, &pos);
 	addComponent(entity, PRESSABLE_C, &pressComp);
 
@@ -170,7 +162,7 @@ void SolutionLogic_init(){
 		POSITION_C,
 		PRESSABLE_C
 	);
-	System pressRender = SystemInit(Blitable_sr, 2,
+	System pressRender = SystemInit(pressable_sr, 2,
 		POSITION_C,
 		PRESSABLE_C
 	); 
