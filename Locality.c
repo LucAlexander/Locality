@@ -4,6 +4,7 @@
 #include "SDL2-Utility/mathutils.h"
 
 #include "Locality.h"
+#include "LocGUI.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
@@ -62,7 +63,7 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(2, sizeof(v2), sizeof(Blitable)); 
+	ecsInit(3, sizeof(v2), sizeof(Blitable), sizeof(pressable_l)); 
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
 	view v = {
@@ -116,10 +117,10 @@ int main(int argc, char** argv){
 		while (SDL_PollEvent(&(state.event))){
 			Solution_inputEvents();
 		}
-		newInputFrame();
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
 		SolutionLogic_update_post();
+		newInputFrame();
 		renderClear();
 		renderSetColor(0, 0, 0, 255);
 		SolutionLogic_render();
@@ -131,46 +132,56 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-// user code space
+//user space code
 
-
-
-
-
-	void testSystemFunction(SysData* sys){
-		v2* pos = componentArg(sys, 0);
-		pos->x ++;
-		pos->y --;
-		printf("%.0f, %.0f\n",pos->x, pos->y);
-	}
-
-
-
-
-
-
-
-// user code space end
-
+void pressActionCustom(void* params){
+	v2 mp = mousePos();
+	printf("\t%.0f %.0f\n", mp.x, mp.y);
+}
 
 void SolutionLogic_init(){
 	state.programState = LOCALITY_STATE_INIT;
 	// SOFTWARE_STATE_INITIALIZER
-	// user code insert
+	
+	// user code insert start
 	
 	uint32_t entity = summon();
-	v2 pos = {0, 0};
-	Blitable tex;
+	v2 pos = {45, 45};
+	Blitable texNormal;
+	BlitableInitF(&texNormal, IMAGE_FILE "button.png", 64, 32);
+	texNormal.center.x = 0;
+	texNormal.center.y = 0;
+	Blitable texHover;
+	BlitableInitF(&texHover, IMAGE_FILE "button_hover.png", 64, 32);
+	texHover.center.x = 0;
+	texHover.center.y = 0;
+	Blitable texPress;
+	BlitableInitF(&texPress, IMAGE_FILE "button_press.png", 64, 32);
+	texPress.center.x = 0;
+	texPress.center.y = 0;
+	pressable_l pressComp;
+	pressable_l_init(&pressComp, pressActionCustom, &texNormal, &texHover, &texPress, 64, 32);
 	addComponent(entity, POSITION_C, &pos);
-	addComponent(entity, BLITABLE_C, &tex);
-	System testSys = SystemInit(testSystemFunction, 2,
+	addComponent(entity, BLITABLE_C, &texNormal);
+	addComponent(entity, PRESSABLE_C, &pressComp);
+
+	// user code insert end
+
+	System pressUpdate = SystemInit(pressable_su, 2,
+		POSITION_C,
+		PRESSABLE_C
+	);
+	System pressRender = SystemInit(Blitable_sr, 2,
+		POSITION_C,
+		PRESSABLE_C
+	); 
+	System blitRender = SystemInit(Blitable_sr, 2, 
 		POSITION_C,
 		BLITABLE_C
 	);
-	SystemActivate(&testSys);
-	Project_registerSystem(&testSys, LOCALITY_STATE_RENDER);
-
-
+	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
+	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
+	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER);
 }
 
 void SolutionLogic_deinit(){
@@ -180,25 +191,21 @@ void SolutionLogic_deinit(){
 
 void SolutionLogic_update_pre(){
 	state.programState = LOCALITY_STATE_UPDATE_PRE;
-	// SOFTWARE_STATE_PREUPDATER
 	vSystemActivate(&(state.updateList_pre));
 }
 
 void SolutionLogic_update(){
 	state.programState = LOCALITY_STATE_UPDATE;
-	// SOFTWARE_STATE_UPDATER
 	vSystemActivate(&(state.updateList));
 }
 
 void SolutionLogic_update_post(){
 	state.programState = LOCALITY_STATE_UPDATE_POST;
-	// SOFTWARE_STATE_POSTUPDATER
 	vSystemActivate(&(state.updateList_post));
 }
 
 void SolutionLogic_render(){
 	state.programState = LOCALITY_STATE_RENDER;
-	// SOFTWARE_STATE_RENDERER
 	vSystemActivate(&(state.renderList));
 }
 

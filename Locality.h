@@ -5,9 +5,12 @@
 #include "SDL2-Utility/graphicsutils.h"
 #include "DataContainers/src/vector/vector.h"
 
+#define IMAGE_FILE "resources/images/"
+
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
-	BLITABLE_C=1
+	BLITABLE_C=1,
+	PRESSABLE_C=2
 }COMPONENT_ID;
 
 struct System;
