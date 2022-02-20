@@ -162,7 +162,6 @@ void SolutionLogic_init(){
 	pressable_l pressComp;
 	pressable_l_init(&pressComp, pressActionCustom, &texNormal, &texHover, &texPress, 64, 32);
 	addComponent(entity, POSITION_C, &pos);
-	addComponent(entity, BLITABLE_C, &texNormal);
 	addComponent(entity, PRESSABLE_C, &pressComp);
 
 	// user code insert end
