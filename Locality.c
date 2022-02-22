@@ -120,6 +120,7 @@ int main(int argc, char** argv){
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
 		SolutionLogic_update_post();
+		purgeDeactivatedData();
 		newInputFrame();
 		renderClear();
 		renderSetColor(0, 0, 0, 255);
@@ -144,20 +145,20 @@ void SolutionLogic_init(){
 	// SOFTWARE_STATE_INITIALIZER
 	
 	// user code insert start
-	
-	uint32_t entity = summon();
-	v2 pos = {45, 45};
-	pressable_l pressComp;
-	pressable_l_init(&pressComp, pressActionCustom,
-		IMAGE_FILE "button.png",
-		IMAGE_FILE "button_hover.png",
-		IMAGE_FILE "button_press.png",
-	64, 32);
-	addComponent(entity, POSITION_C, &pos);
-	addComponent(entity, PRESSABLE_C, &pressComp);
+		
+		uint32_t entity = summon();
+		v2 pos = {45, 45};
+		pressable_l pressComp;
+		pressable_l_init(&pressComp, pressActionCustom,
+			IMAGE_FILE "button.png",
+			IMAGE_FILE "button_hover.png",
+			IMAGE_FILE "button_press.png",
+		64, 32);
+		addComponent(entity, POSITION_C, &pos);
+		addComponent(entity, PRESSABLE_C, &pressComp);
 
 	// user code insert end
-
+	
 	System pressUpdate = SystemInit(pressable_su, 2,
 		POSITION_C,
 		PRESSABLE_C
@@ -199,4 +200,3 @@ void SolutionLogic_render(){
 	state.programState = LOCALITY_STATE_RENDER;
 	vSystemActivate(&(state.renderList));
 }
-
