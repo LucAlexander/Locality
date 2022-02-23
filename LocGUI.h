@@ -20,6 +20,8 @@ typedef struct pressable_l{
 
 void pressable_l_init(pressable_l* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h);
 
+void pressable_hovered(uint32_t entity, pressable_l* press);
+
 void pressable_su(struct SysData* sys);
 void pressable_sr(struct SysData* sys);
 

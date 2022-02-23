@@ -63,7 +63,7 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(4, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(text_l)); 
+	ecsInit(5, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l)); 
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
@@ -139,7 +139,9 @@ int main(int argc, char** argv){
 
 void pressActionCustom(void* params){
 	v2 mp = mousePos();
-	printf("\t%.0f %.0f\n", mp.x, mp.y);
+	uint32_t* a = params;
+	printf("\t%.0f %.0f\targument = %u\n", mp.x, mp.y, *a);
+	*a = (*a << 1);
 }
 
 void SolutionLogic_init(){
@@ -156,10 +158,12 @@ void SolutionLogic_init(){
 			IMAGE_FILE "button_hover.png",
 			IMAGE_FILE "button_press.png",
 		64, 32);
+		uint32_t arg = 16;
 		text_l textNode;
 		text_l_init(&textNode, " Press", 255, 255, 255, 255);
 		addComponent(entity, POSITION_C, &pos);
 		addComponent(entity, PRESSABLE_C, &pressComp);
+		addComponent(entity, PRESSABLE_ARG_C, &arg);
 		addComponent(entity, TEXT_C, &textNode);
 
 	// user code insert end

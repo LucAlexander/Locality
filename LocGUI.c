@@ -1,4 +1,5 @@
 #include "LocGUI.h"
+#include "Locality.h"
 #include "SDL2-Utility/graphicsutils.h"
 #include "SDL2-Utility/inpututils.h"
 #include "SDL2-Utility/mathutils.h"
@@ -27,6 +28,7 @@ void pressable_l_init(pressable_l* pres, void act(void*), const char* normal, co
 }
 
 void pressable_su(SysData* sys){
+	uint32_t entity = entityArg(sys);
 	v2* pos = componentArg(sys, 0);
 	pressable_l* press = componentArg(sys, 1);
 	v2 mp = mousePos();
@@ -36,11 +38,19 @@ void pressable_su(SysData* sys){
 	};
 	press->active = &press->normal;
 	if (pointInRectV2(mp, area)){
-		press->active = &press->hover;
-		if (mousePressed(1)){
-			press->active = &press->press;
-			press->action(NULL);
-		}
+		pressable_hovered(entity, press);
+	}
+}
+
+void pressable_hovered(uint32_t entity, pressable_l* press){
+	void* arg = NULL;
+	if (containsComponent(entity, PRESSABLE_ARG_C)){
+		arg = getComponent(entity, PRESSABLE_ARG_C);
+	}
+	press->active = &press->hover;
+	if (mousePressed(1)){
+		press->active = &press->press;
+		press->action(arg);
 	}
 }
 
