@@ -63,9 +63,11 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(3, sizeof(v2), sizeof(Blitable), sizeof(pressable_l)); 
+	ecsInit(4, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(text_l)); 
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
+	loadFont(FONT_FILE "arcade.TTF", "default");
+	setFont("default");
 	view v = {
 		0, 0,
 		0, 0,
@@ -154,8 +156,11 @@ void SolutionLogic_init(){
 			IMAGE_FILE "button_hover.png",
 			IMAGE_FILE "button_press.png",
 		64, 32);
+		text_l textNode;
+		text_l_init(&textNode, " Press", 255, 255, 255, 255);
 		addComponent(entity, POSITION_C, &pos);
 		addComponent(entity, PRESSABLE_C, &pressComp);
+		addComponent(entity, TEXT_C, &textNode);
 
 	// user code insert end
 	
@@ -171,9 +176,14 @@ void SolutionLogic_init(){
 		POSITION_C,
 		BLITABLE_C
 	);
+	System textRender = SystemInit(text_sr, 2,
+		POSITION_C,
+		TEXT_C
+	);
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
 	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER);
+	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER);
 }
 
 void SolutionLogic_deinit(){

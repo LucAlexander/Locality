@@ -6,11 +6,13 @@
 #include "DataContainers/src/vector/vector.h"
 
 #define IMAGE_FILE "resources/images/"
+#define FONT_FILE "resources/fonts/"
 
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
 	BLITABLE_C=1,
-	PRESSABLE_C=2
+	PRESSABLE_C=2,
+	TEXT_C=3
 }COMPONENT_ID;
 
 struct System;

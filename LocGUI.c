@@ -4,6 +4,12 @@
 #include "SDL2-Utility/mathutils.h"
 #include "Entity-Component-System/ecs.h"
 
+void Blitable_sr(SysData* sys){
+	v2* pos = componentArg(sys, 0);
+	Blitable* active = componentArg(sys, 1);
+	renderBlitableV2(active, *pos);
+}
+
 void pressable_l_init(pressable_l* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h){
 	BlitableInitF(&pres->normal, normal, w, h);
 	BlitableInitF(&pres->hover, hover, w, h);
@@ -44,8 +50,31 @@ void pressable_sr(SysData* sys){
 	renderBlitableV2(press->active, *pos);
 }
 
-void Blitable_sr(SysData* sys){
+void pressable_destroy(uint32_t eid, uint32_t cid){
+	pressable_l* trigger = getComponent(eid, cid);
+	BlitableFree(&(trigger->normal));
+	BlitableFree(&(trigger->hover));
+	BlitableFree(&(trigger->press));
+	markForPurge(eid);
+}
+
+void text_l_init(text_l* txt, const char* message, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	txt->content = message;
+	txt->r = r;
+	txt->g = g;
+	txt->b = b;
+	txt->a = a;
+}
+
+void text_l_setColor(text_l* txt, uint8_t r, uint8_t g, uint8_t b, uint8_t a){
+	txt->r = r;
+	txt->g = g;
+	txt->b = b;
+	txt->a = a;
+}
+
+void text_sr(SysData* sys){
 	v2* pos = componentArg(sys, 0);
-	Blitable* active = componentArg(sys, 1);
-	renderBlitableV2(active, *pos);
+	text_l* txt = componentArg(sys, 1);
+	drawTextV2C(*pos, txt->content, txt->r, txt->b, txt->b, txt->a);
 }
