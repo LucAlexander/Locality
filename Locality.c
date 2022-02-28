@@ -19,6 +19,7 @@ void Project_stateInit(){
 	state.updateList = vSystemInit();
 	state.updateList_post = vSystemInit();
 	state.renderList = vSystemInit();
+	state.renderList_abs = vSystemInit();
 	state.programState = LOCALITY_STATE_INIT;
 }
 
@@ -36,6 +37,9 @@ void Project_registerSystem(System* sys, PROGRAM_STATE mode){
 		return;
 		case LOCALITY_STATE_RENDER:
 			vSystemPushBack(&(state.renderList), *sys);
+		return;
+		case LOCALITY_STATE_RENDER_ABSOLUTE:
+			vSystemPushBack(&(state.renderList_abs), *sys);
 		return;
 	}
 }
@@ -63,13 +67,13 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(5, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l)); 
+	ecsInit(5, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l));
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
 	setFont("default");
 	view v = {
-		0, 0,
+		64, 64,
 		0, 0,
 		WINDOW_WIDTH, WINDOW_HEIGHT
 	};
@@ -127,6 +131,7 @@ int main(int argc, char** argv){
 		renderClear();
 		renderSetColor(0, 0, 0, 255);
 		SolutionLogic_render();
+		SolutionLogic_render_abs();
 		renderFlip();
 	}
 	SolutionLogic_deinit();
@@ -149,7 +154,7 @@ void SolutionLogic_init(){
 	// SOFTWARE_STATE_INITIALIZER
 	
 	// user code insert start
-		
+		renderSetSpriteScale(2, 2);
 		uint32_t entity = summon();
 		v2 pos = {45, 45};
 		pressable_l pressComp;
@@ -160,7 +165,7 @@ void SolutionLogic_init(){
 		64, 32);
 		uint32_t arg = 16;
 		text_l textNode;
-		text_l_init(&textNode, " Press", 255, 255, 255, 255);
+		text_l_init(&textNode, "Press", 255, 255, 255, 255);
 		addComponent(entity, POSITION_C, &pos);
 		addComponent(entity, PRESSABLE_C, &pressComp);
 		addComponent(entity, PRESSABLE_ARG_C, &arg);
@@ -185,9 +190,9 @@ void SolutionLogic_init(){
 		TEXT_C
 	);
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
-	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
-	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER);
-	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER);
+	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER_ABSOLUTE);
 }
 
 void SolutionLogic_deinit(){
@@ -213,4 +218,12 @@ void SolutionLogic_update_post(){
 void SolutionLogic_render(){
 	state.programState = LOCALITY_STATE_RENDER;
 	vSystemActivate(&(state.renderList));
+}
+
+void SolutionLogic_render_abs(){
+	state.programState = LOCALITY_STATE_RENDER_ABSOLUTE;
+	view world = renderGetView();
+	renderSetViewAbsolute();
+	vSystemActivate(&(state.renderList_abs));
+	renderSetView(world);
 }

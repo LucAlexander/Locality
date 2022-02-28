@@ -28,7 +28,8 @@ typedef enum PROGRAM_STATE{
 	LOCALITY_STATE_UPDATE_PRE,
 	LOCALITY_STATE_UPDATE,
 	LOCALITY_STATE_UPDATE_POST,
-	LOCALITY_STATE_RENDER
+	LOCALITY_STATE_RENDER,
+	LOCALITY_STATE_RENDER_ABSOLUTE
 }PROGRAM_STATE;
 
 typedef struct Project_state{
@@ -37,6 +38,7 @@ typedef struct Project_state{
 	vSystem updateList;
 	vSystem updateList_post;
 	vSystem renderList;
+	vSystem renderList_abs;
 	PROGRAM_STATE programState;
 	SDL_Event event;
 }Project_state;
@@ -60,5 +62,6 @@ void SolutionLogic_update();
 void SolutionLogic_update_post();
 
 void SolutionLogic_render();
+void SolutionLogic_render_abs();
 
 #endif
