@@ -64,6 +64,7 @@ void Project_stateExit(){
 	vSystemFree(&(state.updateList));
 	vSystemFree(&(state.updateList_post));
 	vSystemFree(&(state.renderList));
+	vSystemFree(&(state.renderList_abs));
 }
 
 void Solution_setup(){
@@ -73,7 +74,7 @@ void Solution_setup(){
 	loadFont(FONT_FILE "arcade.TTF", "default");
 	setFont("default");
 	view v = {
-		64, 64,
+		32, 32,
 		0, 0,
 		WINDOW_WIDTH, WINDOW_HEIGHT
 	};
@@ -170,29 +171,34 @@ void SolutionLogic_init(){
 		addComponent(entity, PRESSABLE_C, &pressComp);
 		addComponent(entity, PRESSABLE_ARG_C, &arg);
 		addComponent(entity, TEXT_C, &textNode);
+		addEntityFlag(entity, RENDER_ABSOLUTE);
 
 	// user code insert end
 	
-	System pressUpdate = SystemInit(pressable_su, 2,
-		POSITION_C,
-		PRESSABLE_C
-	);
-	System pressRender = SystemInit(pressable_sr, 2,
-		POSITION_C,
-		PRESSABLE_C
-	); 
-	System blitRender = SystemInit(Blitable_sr, 2, 
-		POSITION_C,
-		BLITABLE_C
-	);
-	System textRender = SystemInit(text_sr, 2,
-		POSITION_C,
-		TEXT_C
-	);
+	// Define and initialize systems
+	System pressUpdate = SystemInit(pressable_su, 2, POSITION_C, PRESSABLE_C);
+	System pressRender = SystemInit(pressable_sr, 2, POSITION_C, PRESSABLE_C);
+	SystemAddFilter(&pressRender, RENDER_RELATIVE);
+
+	System blitRender = SystemInit(Blitable_sr, 2, POSITION_C, BLITABLE_C);
+	SystemAddFilter(&blitRender, RENDER_ABSOLUTE);
+
+	System blitRenderAbs = SystemInit(Blitable_sr, 2, POSITION_C, BLITABLE_C);
+	SystemAddFilter(&blitRenderAbs, RENDER_RELATIVE);
+
+	System textRender = SystemInit(text_sr, 2, POSITION_C, TEXT_C);
+	SystemAddFilter(&textRender, RENDER_ABSOLUTE);
+
+	System textRenderAbs = SystemInit(text_sr, 2, POSITION_C, TEXT_C);
+	SystemAddFilter(&textRenderAbs, RENDER_RELATIVE);
+
+	// Register systems to states
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
-	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
+	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER);
 	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
-	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&blitRenderAbs, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&textRenderAbs, LOCALITY_STATE_RENDER_ABSOLUTE);
 }
 
 void SolutionLogic_deinit(){
