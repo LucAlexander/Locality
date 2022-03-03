@@ -6,8 +6,6 @@
 
 struct SysData;
 
-void Blitable_sr(struct SysData* sys);
-
 typedef struct pressable_l{
 	struct Blitable normal;
 	struct Blitable hover;

@@ -5,6 +5,7 @@
 
 #include "Locality.h"
 #include "LocGUI.h"
+#include "LocBaseSystems.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
@@ -68,7 +69,7 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(5, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l));
+	ecsInit(6, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l), sizeof(v2));
 	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
@@ -141,14 +142,41 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-//user space code
+// USER SPACE CODE BEGINS
 
-void pressActionCustom(void* params){
-	v2 mp = mousePos();
-	uint32_t* a = params;
-	printf("\t%.0f %.0f\targument = %u\n", mp.x, mp.y, *a);
-	*a = (*a << 1);
-}
+
+		void createCustomEntity(uint32_t n){
+			uint32_t i;
+			for (i = 0;i<n;++i){
+				uint32_t entity = summon();
+				v2 pos;
+				pos.x = (rand() % (WINDOW_WIDTH / 8) ) * 8;
+				pos.y = (rand() % (WINDOW_HEIGHT / 8) ) * 8;
+				v2 forces;
+				forces.x = (rand() % 20)-10.0;
+				forces.y = (rand() % 20)-10.0;
+				forces.x /= 100.0;
+				forces.y /= 100.0;
+				if (forces.x == 0){
+					forces.x += 0.1;
+				}
+				if (forces.y == 0){
+					forces.y -= 0.1;
+				}
+				Blitable sprite;
+				BlitableInitF(&sprite, IMAGE_FILE "box.png", 32, 32);
+				addComponent(entity, POSITION_C, &pos);
+				addComponent(entity, BLITABLE_C, &sprite);
+				addComponent(entity, FORCES_C, &forces);
+				addEntityFlag(entity, RENDER_RELATIVE);
+			}
+		}
+
+		void pressActionCustom(void* params){
+			createCustomEntity(6);
+		}
+
+// USER SPACE CODE ENDS
 
 void SolutionLogic_init(){
 	state.programState = LOCALITY_STATE_INIT;
@@ -176,6 +204,8 @@ void SolutionLogic_init(){
 	// user code insert end
 	
 	// Define and initialize systems
+	System forcesUpdate = SystemInit(forces_su, 2, POSITION_C, FORCES_C);
+	
 	System pressUpdate = SystemInit(pressable_su, 2, POSITION_C, PRESSABLE_C);
 	System pressRender = SystemInit(pressable_sr, 2, POSITION_C, PRESSABLE_C);
 	SystemAddFilter(&pressRender, RENDER_RELATIVE);
@@ -193,6 +223,7 @@ void SolutionLogic_init(){
 	SystemAddFilter(&textRenderAbs, RENDER_RELATIVE);
 
 	// Register systems to states
+	Project_registerSystem(&forcesUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
 	Project_registerSystem(&textRender, LOCALITY_STATE_RENDER);

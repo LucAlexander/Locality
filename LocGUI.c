@@ -5,12 +5,6 @@
 #include "SDL2-Utility/mathutils.h"
 #include "Entity-Component-System/ecs.h"
 
-void Blitable_sr(SysData* sys){
-	v2* pos = componentArg(sys, 0);
-	Blitable* active = componentArg(sys, 1);
-	renderBlitableV2(active, *pos);
-}
-
 void pressable_l_init(pressable_l* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h){
 	BlitableInitF(&pres->normal, normal, w, h);
 	BlitableInitF(&pres->hover, hover, w, h);

@@ -13,7 +13,8 @@ typedef enum COMPONENT_ID{
 	BLITABLE_C=1,
 	PRESSABLE_C=2,
 	PRESSABLE_ARG_C=3,
-	TEXT_C=4
+	TEXT_C=4,
+	FORCES_C=5
 }COMPONENT_ID;
 
 struct System;
