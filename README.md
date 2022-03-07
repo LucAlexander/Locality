@@ -27,7 +27,7 @@ This static library provides implementation of a series of utilities necessary f
 If you wish to provide your own implementation in place of the SDL2 Wrapper utility, you must ensure to properly implement and replace all these components.
 
 ## Usage
-Assuming you have built the other three libraries and their containing directories are in your projects directory, you may use the proided make file and add your own source files to the `CFILES` variable. From there you may call the `compile` make target to compile your code into an executable, or alternatively the `debug` make target to compile your project with debug symbols for use in GDB, Valgrind, etc. 
+Assuming you have built the other three libraries and their containing directories are in your projects directory, you may use the provided make file and add your own source files to the `CFILES` variable. From there you may call the `compile` make target to compile your code into an executable, or alternatively the `debug` make target to compile your project with debug symbols for use in GDB, Valgrind, etc. 
 
 Please note that all code was written and tested on GNU-C 11.
 
