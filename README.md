@@ -150,7 +150,7 @@ There are build in directory references to non code resource files. Anything fro
 #define FONT_FILE "resources/fonts/"
 
 ```
-This helps simplify the reference process, if you mean to reference an image file located at `"resources/images/box.png"`, you may simply reference it as `IMAGE_FILE box.png`.
+This helps simplify the reference process, if you mean to reference an image file located at `"resources/images/box.png"`, you may simply reference it as `IMAGE_FILE "box.png"`.
 
 ## Standard Utilities
 ## GUI Utilities
