@@ -26,12 +26,33 @@ This static library provides implementation of a series of utilities necessary f
 
 If you wish to provide your own implementation in place of the SDL2 Wrapper utility, you must ensure to properly implement and replace all these components.
 
+# Documentation (WIP)
+
 ## Usage
+### Setup
 Assuming you have built the other three libraries and their containing directories are in your projects directory, you may use the provided make file and add your own source files to the `CFILES` variable. From there you may call the `compile` make target to compile your code into an executable, or alternatively the `debug` make target to compile your project with debug symbols for use in GDB, Valgrind, etc. 
 
-Please note that all code was written and tested on GNU-C 11.
+Please note that all code was written and tested on GNU-C 11, however this project is written with compatibility in mind, and you should be able to use this for any C or C++ project, just keep in mind that you may want to keep within the GNU standard versions.
 
-# Documentation (WIP)
+### Entry Point File
+The Makefile has a variable `PROJFILE` which defines the entry point for your specific project. either create a file with the the current assigned value as the name ( the default should be  `project.c` ), or reassign the value of `PROJFILE` to whatever you want your entry point file to be. This entry point file is the link between all your personal code and Locality. You may put anything in this file and link it to anything else, the only requirement is that this file contains a definition of the function `void project();`
+```
+#include <stdio.h>
+#include "Locality.h"
+#include "LocGUI.h"
+
+...
+
+void project(){
+	printf("Hello World\n");
+}
+
+...
+
+```
+
+This function is called during the initialization state of the progam, after all build in systems modules and components have been initialized and made ready for user code to interact with them.
+
 ## Data Components
 The creation and usage of Data Components follows the documentation provided in the Entity Component System Documentation. Once a component has been created, it must be registered with the data management system in two ways. First you must update the variadic initialization function `ecsInit(uint32_t n, ...);`. The first argument represents the total number of component types which are to be registered, and the following arguments are the sizes in bytes of each individual component type. 
 ```
@@ -123,5 +144,13 @@ Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
 ```
 
 ## Resources
+There are build in directory references to non code resource files. Anything from fonts to images. These are defined in the preprocessor in the following manner
+```
+#define IMAGE_FILE "resources/images/"
+#define FONT_FILE "resources/fonts/"
+
+```
+This helps simplify the reference process, if you mean to reference an image file located at `"resources/images/box.png"`, you may simply reference it as `IMAGE_FILE box.png`.
+
 ## Standard Utilities
 ## GUI Utilities
