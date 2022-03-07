@@ -8,6 +8,9 @@
 #define IMAGE_FILE "resources/images/"
 #define FONT_FILE "resources/fonts/"
 
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 360
+
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
 	BLITABLE_C=1,
@@ -64,5 +67,7 @@ void SolutionLogic_update_post();
 
 void SolutionLogic_render();
 void SolutionLogic_render_abs();
+
+void project();
 
 #endif
