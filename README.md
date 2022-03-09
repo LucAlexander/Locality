@@ -143,6 +143,8 @@ SystemAddFilter(&pressRender, RENDER_RELATIVE);
 Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
 ```
 
+Note the naming convention for the internal system functions, `_su` for logical update system and `_sr` for logical rendering system.
+
 ## Resources
 There are build in directory references to non code resource files. Anything from fonts to images. These are defined in the preprocessor in the following manner
 ```
@@ -152,5 +154,21 @@ There are build in directory references to non code resource files. Anything fro
 ```
 This helps simplify the reference process, if you mean to reference an image file located at `"resources/images/box.png"`, you may simply reference it as `IMAGE_FILE "box.png"`.
 
-## Standard Utilities
-## GUI Utilities
+## Built in Utilities
+The base components and systems are divided up into a series of modules. Systems listed here will usually run on their own, and the components are available for you to use.
+
+### Base Systems
+`void Blitable_sr(struct SysData* sys);`
+`void forces_su(struct SysData* sys);`
+
+### GUI Utilities
+`struct pressable_l`
+`pressable_l_init(pressable* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h);`
+`void pressable_su(struct SysData* sys);`
+`void pressable_sr(struct SysData* sys);`
+`void pressable_destroy(uint32_t eid, uint32_t cid);`
+
+`struct text_l`
+`void text_l_init(text_l* txt, const char* message, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
+`void text_l_setColor(text_t* txt, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
+`void text_sr(struct SysData* sys);`
