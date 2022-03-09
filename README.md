@@ -165,7 +165,7 @@ This system requires a `POSITION_C` component and a `BLITABLE_C` component. It b
 This system requires a `POSITION_C` component and a `FORCES_C` component. Both are `v2` struct types. This System applies forces' x to position's x, and forces' y to position's y.
 
 ### GUI Utilities
-** Component ** `struct pressable_l`, ** ID: ** `PRESSABLE_C`
+**Component** `struct pressable_l`, **ID:** `PRESSABLE_C`
 
 The pressable component denotes a region in which the user can click, which activates some provided function. This component can be given three image sources for idle, hovering and being pressed.
 
@@ -189,7 +189,7 @@ The argument for this action can be passed as a `PRESSABLE_ARC_C`, the type is `
 
 Both systems require a position to function as well.
 
-** Component ** `struct text_l` ** ID: ** `TEXT_C`
+**Component** `struct text_l` **ID:** `TEXT_C`
 
 The text component denotes some text to be blitted to the screen. 
 
