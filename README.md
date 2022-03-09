@@ -26,7 +26,7 @@ This static library provides implementation of a series of utilities necessary f
 
 If you wish to provide your own implementation in place of the SDL2 Wrapper utility, you must ensure to properly implement and replace all these components.
 
-# Documentation (WIP)
+# Documentation
 
 ## Usage
 ### Setup
@@ -158,17 +158,43 @@ This helps simplify the reference process, if you mean to reference an image fil
 The base components and systems are divided up into a series of modules. Systems listed here will usually run on their own, and the components are available for you to use.
 
 ### Base Systems
-`void Blitable_sr(struct SysData* sys);`
-`void forces_su(struct SysData* sys);`
+- `void Blitable_sr(struct SysData* sys);`
+This system requires a `POSITION_C` component and a `BLITABLE_C` component. It blits the image to the screen at the given position.
+
+- `void forces_su(struct SysData* sys);`
+This system requires a `POSITION_C` component and a `FORCES_C` component. Both are `v2` struct types. This System applies forces' x to position's x, and forces' y to position's y.
 
 ### GUI Utilities
-`struct pressable_l`
-`pressable_l_init(pressable* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h);`
-`void pressable_su(struct SysData* sys);`
-`void pressable_sr(struct SysData* sys);`
-`void pressable_destroy(uint32_t eid, uint32_t cid);`
+** Component ** `struct pressable_l`, ** ID: ** `PRESSABLE_C`
 
-`struct text_l`
-`void text_l_init(text_l* txt, const char* message, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
-`void text_l_setColor(text_t* txt, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
-`void text_sr(struct SysData* sys);`
+The pressable component denotes a region in which the user can click, which activates some provided function. This component can be given three image sources for idle, hovering and being pressed.
+
+The action can be set as
+```
+void f(void*){}
+
+...
+
+
+pressable_l a;
+a.action = f;
+```
+
+The argument for this action can be passed as a `PRESSABLE_ARC_C`, the type is `void*`.
+
+- User available function `pressable_l_init(pressable* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h);`
+- User available function`void pressable_destroy(uint32_t eid, uint32_t cid);`
+- System `void pressable_su(struct SysData* sys);`
+- System `void pressable_sr(struct SysData* sys);`
+
+Both systems require a position to function as well.
+
+** Component ** `struct text_l` ** ID: ** `TEXT_C`
+
+The text component denotes some text to be blitted to the screen. 
+
+- User available function `void text_l_init(text_l* txt, const char* message, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
+- User available function `void text_l_setColor(text_t* txt, uint8_t r, uint8_t g, uint8_t b, uint8_t a);`
+- System `void text_sr(struct SysData* sys);`
+
+The render system requires a `POSITION_C` component as well.
