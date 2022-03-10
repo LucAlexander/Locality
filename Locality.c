@@ -70,12 +70,12 @@ void Project_stateExit(){
 
 void Solution_setup(){
 	ecsInit(6, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l), sizeof(v2));
-	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, "Locality Project");
+	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
 	setFont("default");
 	view v = {
-		32, 32,
+		0, 0,
 		0, 0,
 		WINDOW_WIDTH, WINDOW_HEIGHT
 	};

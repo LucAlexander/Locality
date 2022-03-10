@@ -43,8 +43,10 @@ void pressable_hovered(uint32_t entity, pressable_l* press){
 	}
 	press->active = &press->hover;
 	if (mousePressed(1)){
-		press->active = &press->press;
 		press->action(arg);
+	}
+	if (mouseHeld(1)){
+		press->active = &press->press;
 	}
 }
 

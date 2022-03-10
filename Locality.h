@@ -13,6 +13,8 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
 
+#define WINDOW_TITLE "Loclity Project"
+
 #define TICKS_PER_SECOND 60
 #define TICK_TIME 1000/TICKS_PER_SECOND
 
