@@ -6,6 +6,10 @@
 
 void Blitable_sr(SysData* sys){
 	v2* pos = componentArg(sys, 0);
+	view v = renderGetView();
+	if (pos->x > v.pw || pos->x <v.px || pos->y > v.ph || pos->y < v.py){
+		return;
+	}
 	Blitable* active = componentArg(sys, 1);
 	renderBlitableV2(active, *pos);
 }

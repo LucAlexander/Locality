@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include "Entity-Component-System/ecs.h"
 #include "SDL2-Utility/inpututils.h"
 #include "SDL2-Utility/mathutils.h"
@@ -19,6 +20,8 @@ void Project_stateInit(){
 	state.renderList = vSystemInit();
 	state.renderList_abs = vSystemInit();
 	state.programState = LOCALITY_STATE_INIT;
+	state.baseTime = 0;
+	state.tick = 0;
 }
 
 void Project_registerSystem(System* sys, PROGRAM_STATE mode){
@@ -114,14 +117,10 @@ void Solution_exit(){
 	freeEcs();
 }
 
-int main(int argc, char** argv){
-	Project_stateInit();
-	Solution_setup();
-	SolutionLogic_init();
-	while(state.run){
-		while (SDL_PollEvent(&(state.event))){
-			Solution_inputEvents();
-		}
+void Solution_tick(){
+	projectTickUpdate();
+	if (projectTick()){
+		projectTickReset();
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
 		SolutionLogic_update_post();
@@ -132,6 +131,19 @@ int main(int argc, char** argv){
 		SolutionLogic_render();
 		SolutionLogic_render_abs();
 		renderFlip();
+	}
+}
+
+int main(int argc, char** argv){
+	Project_stateInit();
+	Solution_setup();
+	SolutionLogic_init();
+	projectTickReset();
+	while(state.run){
+		while (SDL_PollEvent(&(state.event))){
+			Solution_inputEvents();
+		}
+		Solution_tick();
 	}
 	SolutionLogic_deinit();
 	Solution_exit();
@@ -206,3 +218,19 @@ void SolutionLogic_render_abs(){
 	vSystemActivate(&(state.renderList_abs));
 	renderSetView(world);
 }
+
+// time
+
+void projectTickUpdate(){
+	state.tick += (clock() - state.baseTime);
+}
+
+uint8_t projectTick(){
+	return (((double)state.tick/(double)CLOCKS_PER_SEC)*1000) >= TICK_TIME;
+}
+
+void projectTickReset(){
+	state.baseTime = clock();
+	state.tick = 0;
+}
+

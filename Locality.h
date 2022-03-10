@@ -1,7 +1,9 @@
 #ifndef LOCALITY_MAIN_H
 #define LOCALITY_MAIN_H
 
+#include <time.h>
 #include <inttypes.h>
+
 #include "SDL2-Utility/graphicsutils.h"
 #include "DataContainers/src/vector/vector.h"
 
@@ -10,6 +12,9 @@
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
+
+#define TICKS_PER_SECOND 60
+#define TICK_TIME 1000/TICKS_PER_SECOND
 
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
@@ -45,6 +50,8 @@ typedef struct Project_state{
 	vSystem renderList_abs;
 	PROGRAM_STATE programState;
 	SDL_Event event;
+	clock_t baseTime;
+	clock_t tick;
 }Project_state;
 
 void Project_stateInit();
@@ -54,6 +61,7 @@ void Project_stateExit();
 
 void Solution_setup();
 void Solution_inputEvents();
+void Solution_tick();
 void Solution_exit();
 
 // PROJECT LOGIC
@@ -69,5 +77,10 @@ void SolutionLogic_render();
 void SolutionLogic_render_abs();
 
 void project();
+
+// time
+void projectTickUpdate();
+uint8_t projectTick();
+void projectTickReset();
 
 #endif
