@@ -10,13 +10,7 @@
 #define IMAGE_FILE "resources/images/"
 #define FONT_FILE "resources/fonts/"
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 360
-
-#define WINDOW_TITLE "Loclity Project"
-
-#define TICKS_PER_SECOND 60
-#define TICK_TIME 1000/TICKS_PER_SECOND
+#define PROJECT_TITLE_LENGTH 64
 
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
@@ -43,6 +37,14 @@ typedef enum PROGRAM_STATE{
 	LOCALITY_STATE_RENDER_ABSOLUTE
 }PROGRAM_STATE;
 
+typedef struct Project_config{
+	uint32_t window_w;
+	uint32_t window_h;
+	char window_title[PROJECT_TITLE_LENGTH];
+	uint32_t ticks_per_second;
+	uint32_t tick_time;
+}Project_config;
+
 typedef struct Project_state{
 	uint8_t run;
 	vSystem updateList_pre;
@@ -55,6 +57,11 @@ typedef struct Project_state{
 	clock_t baseTime;
 	clock_t tick;
 }Project_state;
+
+void Project_configInit();
+void Project_configRead();
+void Project_configParse(char* line, uint32_t len);
+void Project_configSetVariable(char* variable, char* value);
 
 void Project_stateInit();
 void Project_registerSystem(struct System* sys, PROGRAM_STATE mode);
@@ -84,5 +91,6 @@ void project();
 void projectTickUpdate();
 uint8_t projectTick();
 void projectTickReset();
+clock_t getFrameTime();
 
 #endif

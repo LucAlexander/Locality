@@ -11,6 +11,67 @@
 VECTOR_SOURCE(vSystem, System)
 
 static Project_state state;
+static Project_config config;
+
+void Project_configInit(){
+	config.window_w = 640;
+	config.window_h = 360;
+	strcpy(config.window_title,"Locality Project");
+	config.ticks_per_second = 60;
+	Project_configRead();
+	config.tick_time = 1000/config.ticks_per_second;
+}
+
+void Project_configRead(){
+	FILE* configFile = fopen("./config.txt", "r");
+	if (configFile == NULL){
+		fclose(configFile);
+		return;
+	}
+	char line[64];
+	while(fgets(line, 64, configFile) != NULL){
+		Project_configParse(line, 64);
+	}
+	fclose(configFile);
+}
+
+void Project_configParse(char* line, uint32_t len){
+	uint32_t i;
+	char var[64] = "";
+	char val[64] = "";
+	char* c = line;
+	int32_t secondHalf = -1;
+	for (i = 0 ; i < len && *c ; ++i, ++c){
+		if (secondHalf != -1){
+			val[secondHalf++] = *c;
+			continue;
+		}
+		if (*c=='='){
+			strncat(var,line,i);
+			secondHalf = 0;
+		}
+	}
+	Project_configSetVariable(var, val);
+}
+
+void Project_configSetVariable(char* variable, char* value){
+	if (strcmp(variable, "WINDOW_W")==0){
+		config.window_w = atoi(value);
+		return;
+	}
+	if (strcmp(variable, "WINDOW_H")==0){
+		config.window_h = atoi(value);
+		return;
+	}
+	if (strcmp(variable, "WINDOW_TITLE")==0){
+		strcpy(config.window_title,value);
+		return;
+	}
+	if (strcmp(variable, "TICKS_PER_SECOND")==0){
+		config.ticks_per_second = atoi(value);
+		return;
+	}
+}
 
 void Project_stateInit(){
 	state.run = 1;
@@ -70,14 +131,14 @@ void Project_stateExit(){
 
 void Solution_setup(){
 	ecsInit(6, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l), sizeof(v2));
-	graphicsInit(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+	graphicsInit(config.window_w, config.window_h, config.window_title);
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
 	setFont("default");
 	view v = {
 		0, 0,
 		0, 0,
-		WINDOW_WIDTH, WINDOW_HEIGHT
+		config.window_w, config.window_h
 	};
 	renderSetView(v);
 }
@@ -135,6 +196,7 @@ void Solution_tick(){
 }
 
 int main(int argc, char** argv){
+	Project_configInit();
 	Project_stateInit();
 	Solution_setup();
 	SolutionLogic_init();
@@ -226,7 +288,7 @@ void projectTickUpdate(){
 }
 
 uint8_t projectTick(){
-	return (((double)state.tick/(double)CLOCKS_PER_SEC)*1000) >= TICK_TIME;
+	return getFrameTime() >= config.tick_time;
 }
 
 void projectTickReset(){
@@ -234,3 +296,6 @@ void projectTickReset(){
 	state.tick = 0;
 }
 
+clock_t getFrameTime(){
+	return (((double)state.tick)/((double)CLOCKS_PER_SEC))*1000;
+}

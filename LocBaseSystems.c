@@ -1,7 +1,10 @@
 #include "LocBaseSystems.h"
+#include "Locality.h"
+
 #include "SDL2-Utility/graphicsutils.h"
 #include "SDL2-Utility/mathutils.h"
 #include "SDL2-Utility/inpututils.h"
+
 #include "Entity-Component-System/ecs.h"
 
 void Blitable_sr(SysData* sys){

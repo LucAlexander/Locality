@@ -12,8 +12,8 @@ void createCustomEntity(uint32_t n){
 	for (i = 0;i<n;++i){
 		uint32_t entity = summon();
 		v2 pos;
-		pos.x = (rand() % (WINDOW_WIDTH / 8) ) * 8;
-		pos.y = (rand() % (WINDOW_HEIGHT / 8) ) * 8;
+		pos.x = (rand() % (1366 / 8) ) * 8;
+		pos.y = (rand() % (768 / 8) ) * 8;
 		v2 forces;
 		forces.x = (rand() % 20)-10.0;
 		forces.y = (rand() % 20)-10.0;
@@ -37,7 +37,6 @@ void createCustomEntity(uint32_t n){
 void pressActionCustom(void* params){
 	createCustomEntity(100);
 }
-
 
 void project(){
 	renderSetSpriteScale(2, 2);
