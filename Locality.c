@@ -120,7 +120,6 @@ void Solution_exit(){
 void Solution_tick(){
 	projectTickUpdate();
 	if (projectTick()){
-		projectTickReset();
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
 		SolutionLogic_update_post();
@@ -131,6 +130,7 @@ void Solution_tick(){
 		SolutionLogic_render();
 		SolutionLogic_render_abs();
 		renderFlip();
+		projectTickReset();
 	}
 }
 

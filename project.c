@@ -35,7 +35,7 @@ void createCustomEntity(uint32_t n){
 }
 
 void pressActionCustom(void* params){
-	createCustomEntity(6);
+	createCustomEntity(100);
 }
 
 
