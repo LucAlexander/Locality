@@ -4,6 +4,8 @@
 #include <time.h>
 #include <inttypes.h>
 
+#include "LocBaseComponents.h"
+
 #include "SDL2-Utility/graphicsutils.h"
 #include "DataContainers/src/vector/vector.h"
 
@@ -11,15 +13,6 @@
 #define FONT_FILE "resources/fonts/"
 
 #define PROJECT_TITLE_LENGTH 64
-
-typedef enum COMPONENT_ID{
-	POSITION_C=0,
-	BLITABLE_C=1,
-	PRESSABLE_C=2,
-	PRESSABLE_ARG_C=3,
-	TEXT_C=4,
-	FORCES_C=5
-}COMPONENT_ID;
 
 struct System;
 
@@ -44,6 +37,9 @@ typedef struct Project_config{
 	uint32_t ticks_per_second;
 	uint32_t tick_time;
 }Project_config;
+
+uint32_t getWindowW();
+uint32_t getWindowH();
 
 typedef struct Project_state{
 	uint8_t run;

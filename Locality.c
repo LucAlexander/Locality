@@ -42,7 +42,7 @@ void Project_configParse(char* line, uint32_t len){
 	char* c = line;
 	int32_t secondHalf = -1;
 	for (i = 0 ; i < len && *c ; ++i, ++c){
-		if (secondHalf != -1){
+		if (secondHalf != -1 && *c!='\n'){
 			val[secondHalf++] = *c;
 			continue;
 		}
@@ -71,6 +71,14 @@ void Project_configSetVariable(char* variable, char* value){
 		config.ticks_per_second = atoi(value);
 		return;
 	}
+}
+
+uint32_t getWindowW(){
+	return config.window_w;
+}
+
+uint32_t getWindowH(){
+	return config.window_h;
 }
 
 void Project_stateInit(){
@@ -130,7 +138,15 @@ void Project_stateExit(){
 }
 
 void Solution_setup(){
-	ecsInit(6, sizeof(v2), sizeof(Blitable), sizeof(pressable_l), sizeof(void*), sizeof(text_l), sizeof(v2));
+	ecsInit(LOCALITY_COMPONENT_COUNT,
+		sizeof(v2),
+		sizeof(Blitable),
+		sizeof(pressable_l),
+		sizeof(void*),
+		sizeof(text_l),
+		sizeof(v2),
+		sizeof(behavior_l)
+	);
 	graphicsInit(config.window_w, config.window_h, config.window_title);
 	inputInit();
 	loadFont(FONT_FILE "arcade.TTF", "default");
@@ -235,7 +251,10 @@ void SolutionLogic_init(){
 	System textRenderAbs = SystemInit(text_sr, 2, POSITION_C, TEXT_C);
 	SystemAddFilter(&textRenderAbs, RENDER_RELATIVE);
 
+	System behaviorUpdate = SystemInit(behavior_su, 1, BEHAVIOR_C);
+
 	// Register systems to states
+	Project_registerSystem(&behaviorUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&forcesUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);
@@ -294,4 +313,8 @@ uint8_t projectTick(){
 void projectTickReset(){
 	state.baseTime = SDL_GetTicks();
 	state.tick = 0;
+}
+
+uint32_t getFrameTime(){
+	return state.tick;
 }

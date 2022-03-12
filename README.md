@@ -157,12 +157,23 @@ This helps simplify the reference process, if you mean to reference an image fil
 ## Built in Utilities
 The base components and systems are divided up into a series of modules. Systems listed here will usually run on their own, and the components are available for you to use.
 
+### Excplicit Base Components
+- `behavior_h` is a behavior component for explicit custom behavior. It contains a function pointer which takes a `uint32_t` entity id. It is not reccommended that you overuse this component, as its operation is naturally slower.
+
 ### Base Systems
 - `void Blitable_sr(struct SysData* sys);`
 This system requires a `POSITION_C` component and a `BLITABLE_C` component. It blits the image to the screen at the given position.
 
 - `void forces_su(struct SysData* sys);`
 This system requires a `POSITION_C` component and a `FORCES_C` component. Both are `v2` struct types. This System applies forces' x to position's x, and forces' y to position's y.
+
+- User available function `void forces_applyForce(v2* left, float len, float dir);`
+This function applies forces to an existing `v2` force.
+- User available function `void forces_applyForceV2(v2* left, v2 force);`
+This function is the Same as the previous one, but with `v2` input for the added force.
+
+- User available function `void behavior_init(struct behavior_l* s, void(*f)(uint32_t));`
+- User available function `void behavior_su(struct SysData* sys);`
 
 ### GUI Utilities
 **Component** `struct pressable_l`, **ID:** `PRESSABLE_C`
