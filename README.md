@@ -54,7 +54,7 @@ void project(){
 This function is called during the initialization state of the progam, after all build in systems modules and components have been initialized and made ready for user code to interact with them.
 
 ## Data Components
-The creation and usage of Data Components follows the documentation provided in the Entity Component System Documentation. Once a component has been created, it must be registered with the data management system in two ways. First you must update the variadic initialization function `ecsInit(uint32_t n, ...);`. The first argument represents the total number of component types which are to be registered, and the following arguments are the sizes in bytes of each individual component type. 
+The creation and usage of Data Components follows the documentation provided in the Entity Component System Documentation. Once a component has been created, it must be registered with the data management system in two ways. First you must update the variadic initialization function `ecsInit(uint32_t n, ...);`. The first argument represents the total number of component types which are to be registered (which is handled by an enum, you shouldn't have to touch this part), and the following arguments are the sizes in bytes of each individual component type. 
 ```
 typedef struct v2{
 	float x;
@@ -69,7 +69,7 @@ typedef struct image{
 
 ...
 
-ecsInit(2, sizeof(v2), sizeof(image));
+ecsInit(LOCALITY_COMPONENT_COUNT, sizeof(v2), sizeof(image));
 ```
 
 After this is done you must update the `COMPONENT_ID` enumerator with the new sequential id corrosponding with your new component type. Suppose you have implemented a component `struct text_content_l` as
@@ -88,6 +88,7 @@ typedef enum COMPONENT_ID{
 	POSITION_C=0,
 	BLITABLE_C=1,
 	TEXT_CONTENT_C=2,	+
+	LOCALITY_COMPONENT_COUNT
 }COMPONENT_ID;
 ```
 
