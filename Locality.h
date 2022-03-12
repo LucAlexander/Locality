@@ -54,8 +54,8 @@ typedef struct Project_state{
 	vSystem renderList_abs;
 	PROGRAM_STATE programState;
 	SDL_Event event;
-	clock_t baseTime;
-	clock_t tick;
+	uint32_t baseTime;
+	uint32_t tick;
 }Project_state;
 
 void Project_configInit();
@@ -91,6 +91,6 @@ void project();
 void projectTickUpdate();
 uint8_t projectTick();
 void projectTickReset();
-clock_t getFrameTime();
+uint32_t getFrameTime();
 
 #endif

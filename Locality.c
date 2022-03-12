@@ -284,18 +284,14 @@ void SolutionLogic_render_abs(){
 // time
 
 void projectTickUpdate(){
-	state.tick += (clock() - state.baseTime);
+	state.tick = (SDL_GetTicks() - state.baseTime);
 }
 
 uint8_t projectTick(){
-	return getFrameTime() >= config.tick_time;
+	return state.tick >= config.tick_time;
 }
 
 void projectTickReset(){
-	state.baseTime = clock();
+	state.baseTime = SDL_GetTicks();
 	state.tick = 0;
-}
-
-clock_t getFrameTime(){
-	return (((double)state.tick)/((double)CLOCKS_PER_SEC))*1000;
 }

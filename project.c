@@ -25,6 +25,8 @@ void createCustomEntity(uint32_t n){
 		if (forces.y == 0){
 			forces.y -= 0.1;
 		}
+		forces.x *= 10;
+		forces.y *= 10;
 		Blitable sprite;
 		BlitableInitF(&sprite, IMAGE_FILE "box.png", 32, 32);
 		addComponent(entity, POSITION_C, &pos);
