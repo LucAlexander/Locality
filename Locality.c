@@ -145,7 +145,8 @@ void Solution_setup(){
 		sizeof(void*),
 		sizeof(text_l),
 		sizeof(v2),
-		sizeof(behavior_l)
+		sizeof(behavior_l),
+		sizeof(repeater_l)
 	);
 	graphicsInit(config.window_w, config.window_h, config.window_title);
 	inputInit();
@@ -252,9 +253,11 @@ void SolutionLogic_init(){
 	SystemAddFilter(&textRenderAbs, RENDER_RELATIVE);
 
 	System behaviorUpdate = SystemInit(behavior_su, 1, BEHAVIOR_C);
+	System repeaterUpdate = SystemInit(repeater_su, 1, REPEATER_C);
 
 	// Register systems to states
 	Project_registerSystem(&behaviorUpdate, LOCALITY_STATE_UPDATE);
+	Project_registerSystem(&repeaterUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&forcesUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
 	Project_registerSystem(&blitRender, LOCALITY_STATE_RENDER);

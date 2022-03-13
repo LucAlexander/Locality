@@ -29,7 +29,7 @@ void forces_applyForceV2(v2* left, v2 force){
 	forces_applyForce(left, force.x, force.y);
 }
 
-void behavior_init(behavior_l* s, void(*f)(uint32_t)){
+void behavior_l_init(behavior_l* s, void(*f)(uint32_t)){
 	s->action = f;
 }
 
@@ -39,6 +39,55 @@ void behavior_su(SysData* sys){
 	s->action(entity);
 }
 
+void repeater_l_init(repeater_l* l, void (*f)(void*), uint32_t ms, uint32_t n){
+	l->action = f;
+	l->triggerInterval = ms;
+	l->triggerTime = ms;
+	l->actionCount = n;
+	l->maxTriggers = REPEATER_SENTINEL;
+	l->maxTime = REPEATER_SENTINEL;
+}
 
+void repeater_setMaxTriggers(struct repeater_l* l, uint32_t max){
+	l->maxTriggers = max;
+}
 
+void repeater_setMaxTime(struct repeater_l* l, uint32_t max){
+	l->maxTime = max;
+}
+
+void repeater_trigger(SysData* sys, repeater_l* l){
+	uint32_t entity = entityArg(sys);
+	void* args = NULL;
+	l->triggerTime = l->triggerInterval;
+	if (l->maxTriggers==0){
+		markForPurge(entity);
+		return;
+	}
+	if (l->maxTriggers > 0){
+		l->maxTriggers--;
+	}
+	if (containsComponent(entity, REPEATER_ARG_C)){
+		args = getComponent(entity, REPEATER_ARG_C);
+	}
+	for (uint32_t i = 0;i<l->actionCount;++i){
+		l->action(args);
+	}
+}
+
+void repeater_su(SysData* sys){
+	repeater_l* l = componentArg(sys, 0);
+	l->triggerTime -= getFrameTime();
+	if (l->maxTime > 0){
+		l->maxTime -= getFrameTime();
+		if (l->maxTime <= 0){
+			uint32_t entity = entityArg(sys);
+			markForPurge(entity);
+			return;
+		}
+	}
+	if (l->triggerTime <= 0){
+		repeater_trigger(sys, l);
+	}
+}
 
