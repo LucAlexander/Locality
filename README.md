@@ -161,7 +161,8 @@ This helps simplify the reference process, if you mean to reference an image fil
 The base components and systems are divided up into a series of modules. Systems listed here will usually run on their own, and the components are available for you to use.
 
 ### Excplicit Base Components
-- `behavior_h` is a behavior component for explicit custom behavior. It contains a function pointer which takes a `uint32_t` entity id. It is not reccommended that you overuse this component, as its operation is naturally slower.
+- `behavior_l` is a behavior component for explicit custom behavior. It contains a function pointer which takes a `uint32_t` entity id. It is not reccommended that you overuse this component, as its operation is naturally slower.
+- `repeater_l` is a functional component for repeated action among some time frame.
 
 ### Base Systems
 - `void Blitable_sr(struct SysData* sys);`
@@ -175,8 +176,12 @@ This function applies forces to an existing `v2` force.
 - User available function `void forces_applyForceV2(v2* left, v2 force);`
 This function is the Same as the previous one, but with `v2` input for the added force.
 
-- User available function `void behavior_init(struct behavior_l* s, void(*f)(uint32_t));`
+- User available function `void behavior_l_init(struct behavior_l* s, void(*f)(uint32_t));`
 - User available function `void behavior_su(struct SysData* sys);`
+- User available function `void repeater_l_init(struct repeater_l* l, void (*f)(void*), uint32_t ms, uint32_t n);` where ms is the interval in milliseconds, and n is the times to repeat per interval.
+- User available function `void repeater_setMaxTriggers(struct repeater_l* l, uint32_t max);` to set the maximum number of trigger intervals which can elapse before the component entity self destructs.
+- User available function `void repeater_setMaxTime(struct repeater_l* l, uint32_t max);` to set the maximum time for the component entity to exist.
+- `void repeater_su(struct SysData* sys);` which updates the repeater and triggers it when time intervals elapse.
 
 ### GUI Utilities
 **Component** `struct pressable_l`, **ID:** `PRESSABLE_C`
