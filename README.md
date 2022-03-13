@@ -1,5 +1,5 @@
 # Locality
-![](https://github.com/LucAlexander/Locality/blob/main/Locality.png)
+![](https://github.com/LucAlexander/Locality/blob/master/Locality.png)
 Locality is a (proof of concept) general purpose software development tool built to optimize program locality using a modified Entity (Data) Component System for data management. This custom software architecture promotes a separation between the programs data and logic systems in a data oriented approach to software development. 
 ## ( Please note that this Project is heavily work in progress )
 ## Dependancies
