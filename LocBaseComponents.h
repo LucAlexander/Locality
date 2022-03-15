@@ -2,6 +2,7 @@
 #define LOCALITY_BASE_COMPONENTS_H
 
 #include <inttypes.h>
+#include "projectComponents.h"
 
 typedef enum COMPONENT_ID{
 	POSITION_C=0,
@@ -13,6 +14,7 @@ typedef enum COMPONENT_ID{
 	BEHAVIOR_C=6,
 	REPEATER_C=7,
 	REPEATER_ARG_C=8,
+	PROJET_COMPONENTS_H,
 	LOCALITY_COMPONENT_COUNT
 }COMPONENT_ID;
 

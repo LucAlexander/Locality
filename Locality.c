@@ -154,7 +154,8 @@ void Solution_setup(){
 		sizeof(text_l),
 		sizeof(v2),
 		sizeof(behavior_l),
-		sizeof(repeater_l)
+		sizeof(repeater_l),
+		PROJECT_COMPONENT_SIZES
 	);
 	graphicsInit(config.window_w, config.window_h, config.window_title);
 	inputInit();

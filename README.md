@@ -59,8 +59,12 @@ void project(){
 
 Both of these functions are called during the initialization state of the progam, after all built in system modules and components have been initialized and made ready for user code to interact with them.
 
+In addition to this file, you are provided a file `projectComponents.h` which contains a pre processor definition of two lists, `PROJECT_COMPONENTS_H` which takes the enumerated ID of whatever component you add, and `PROJECT_COMPONENT_SIZES` which takes the size in bytes of each component you add, the order of these two lists must be consistent.
+
+While you may change the name of the project file to whatever you'd lke, the name of `projectComponents.h` must remain constant.
+
 ## Data Components
-The creation and usage of Data Components follows the documentation provided in the Entity Component System Documentation. Once a component has been created, it must be registered with the data management system in two ways. First you must update the variadic initialization function `ecsInit(uint32_t n, ...);`. The first argument represents the total number of component types which are to be registered (which is handled by an enum, you shouldn't have to touch this part), and the following arguments are the sizes in bytes of each individual component type. 
+When you create a new data component type, you must register it through these lists. 
 ```
 typedef struct v2{
 	float x;
@@ -73,34 +77,21 @@ typedef struct image{
 	uint32_t height;
 }image;
 
-...
-
-ecsInit(LOCALITY_COMPONENT_COUNT, sizeof(v2), sizeof(image));
 ```
 
-After this is done you must update the `COMPONENT_ID` enumerator with the new sequential id corrosponding with your new component type. Suppose you have implemented a component `struct text_content_l` as
-
+In `projectComponents.h`:
 ```
-typedef struct text_content_l{
-	const char* content;
-	uint8_t r, g, b, a;
-}text_content_l;
-```
+#ifndef PROJECT_COMPONENTS_H
+#define PROJECT_COMPONENTS_H \
+	POINT_C,\
+	SPRITE_C
 
-You would then add an enumerator state to `COMPONENT_ID` as
-
-```
-typedef enum COMPONENT_ID{
-	POSITION_C=0,
-	BLITABLE_C=1,
-	TEXT_CONTENT_C=2,	+
-	LOCALITY_COMPONENT_COUNT
-}COMPONENT_ID;
+#define PROJECT_COMPONENT_SIZES \
+	sizeof(v2),\
+	sizeof(image)
 ```
 
-The value of the new enumerator state should follow natural sequential order. This id represents the bit position in a bit flag representing any given entities contents, so it must be unique. Also note the naming convention present. For a struct type component, use the suffix `_l` which stands for locality or locality component. For its enumerator reference use the suffix `_C` which stands for component.
-
-This component can now be used in accordance with the data management system precicely how it is described in the Entity Component System documentation
+This component can now be used in accordance with the data management system.
 
 ## Systems
 The way systems are created, activated, customized and destroyed follows as it is described in the Entity Component System Documentation. This project serves as a complete implementation of s system manager. In Locality, systems must be registered to some target program state which denotes at which stage in this program the system should activate. Other functionalities such as flagged entity purging are entirely implemented and it should be assumed that they work as written and intended.
