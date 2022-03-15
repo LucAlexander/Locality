@@ -22,8 +22,7 @@ void pressable_hovered(uint32_t entity, pressable_l* press);
 
 void pressable_su(struct SysData* sys);
 void pressable_sr(struct SysData* sys);
-
-void pressable_destroy(uint32_t eid, uint32_t cid);
+void pressable_f(struct SysData* sys);
 
 typedef struct text_l{
 	const char*  content;

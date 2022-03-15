@@ -86,6 +86,7 @@ void Project_stateInit(){
 	state.updateList_pre = vSystemInit();
 	state.updateList = vSystemInit();
 	state.updateList_post = vSystemInit();
+	state.freeData = vSystemInit();
 	state.renderList = vSystemInit();
 	state.renderList_abs = vSystemInit();
 	state.programState = LOCALITY_STATE_INIT;
@@ -105,10 +106,16 @@ void Project_registerSystem(System* sys, PROGRAM_STATE mode){
 		case LOCALITY_STATE_UPDATE_POST:
 			vSystemPushBack(&(state.updateList_post), *sys);
 		return;
+		case LOCALITY_STATE_FREE_DATA:
+			SystemAddMagnet(sys, ENTITY_DEACTIVATE);
+			vSystemPushBack(&(state.freeData), *sys);
+		return;
 		case LOCALITY_STATE_RENDER:
+			SystemAddFilter(sys, RENDER_ABSOLUTE);
 			vSystemPushBack(&(state.renderList), *sys);
 		return;
 		case LOCALITY_STATE_RENDER_ABSOLUTE:
+			SystemAddFilter(sys, RENDER_RELATIVE);
 			vSystemPushBack(&(state.renderList_abs), *sys);
 		return;
 	}
@@ -133,6 +140,7 @@ void Project_stateExit(){
 	vSystemFree(&(state.updateList_pre));
 	vSystemFree(&(state.updateList));
 	vSystemFree(&(state.updateList_post));
+	vSystemFree(&(state.freeData));
 	vSystemFree(&(state.renderList));
 	vSystemFree(&(state.renderList_abs));
 }
@@ -201,6 +209,7 @@ void Solution_tick(){
 		SolutionLogic_update_pre();
 		SolutionLogic_update();
 		SolutionLogic_update_post();
+		SolutionLogic_freeData();
 		purgeDeactivatedData();
 		newInputFrame();
 		renderClear();
@@ -238,19 +247,14 @@ void SolutionLogic_init(){
 	
 	System pressUpdate = SystemInit(pressable_su, 2, POSITION_C, PRESSABLE_C);
 	System pressRender = SystemInit(pressable_sr, 2, POSITION_C, PRESSABLE_C);
-	SystemAddFilter(&pressRender, RENDER_RELATIVE);
+	System pressFree = SystemInit(pressable_f, 1, PRESSABLE_C);
 
 	System blitRender = SystemInit(Blitable_sr, 2, POSITION_C, BLITABLE_C);
-	SystemAddFilter(&blitRender, RENDER_ABSOLUTE);
-
 	System blitRenderAbs = SystemInit(Blitable_sr, 2, POSITION_C, BLITABLE_C);
-	SystemAddFilter(&blitRenderAbs, RENDER_RELATIVE);
+	System blitFree = SystemInit(Blitable_f, 1, BLITABLE_C);
 
 	System textRender = SystemInit(text_sr, 2, POSITION_C, TEXT_C);
-	SystemAddFilter(&textRender, RENDER_ABSOLUTE);
-
 	System textRenderAbs = SystemInit(text_sr, 2, POSITION_C, TEXT_C);
-	SystemAddFilter(&textRenderAbs, RENDER_RELATIVE);
 
 	System behaviorUpdate = SystemInit(behavior_su, 1, BEHAVIOR_C);
 	System repeaterUpdate = SystemInit(repeater_su, 1, REPEATER_C);
@@ -265,8 +269,11 @@ void SolutionLogic_init(){
 	Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
 	Project_registerSystem(&blitRenderAbs, LOCALITY_STATE_RENDER_ABSOLUTE);
 	Project_registerSystem(&textRenderAbs, LOCALITY_STATE_RENDER_ABSOLUTE);
+	Project_registerSystem(&blitFree, LOCALITY_STATE_FREE_DATA);
+	Project_registerSystem(&pressFree, LOCALITY_STATE_FREE_DATA);
 
 	// Launch project specific code
+	project_systems();
 	project();
 }
 
@@ -288,6 +295,11 @@ void SolutionLogic_update(){
 void SolutionLogic_update_post(){
 	state.programState = LOCALITY_STATE_UPDATE_POST;
 	vSystemActivate(&(state.updateList_post));
+}
+
+void SolutionLogic_freeData(){
+	state.programState = LOCALITY_STATE_FREE_DATA;
+	vSystemActivate(&(state.freeData));
 }
 
 void SolutionLogic_render(){

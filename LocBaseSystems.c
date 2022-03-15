@@ -13,6 +13,11 @@ void Blitable_sr(SysData* sys){
 	renderBlitableV2(active, *pos);
 }
 
+void Blitable_f(struct SysData* sys){
+	Blitable* blit = componentArg(sys, 0);
+	BlitableFree(blit);
+}
+
 void forces_su(SysData* sys){
 	v2* pos = componentArg(sys, 0);
 	v2* forces = componentArg(sys, 1);

@@ -26,6 +26,7 @@ typedef enum PROGRAM_STATE{
 	LOCALITY_STATE_UPDATE_PRE,
 	LOCALITY_STATE_UPDATE,
 	LOCALITY_STATE_UPDATE_POST,
+	LOCALITY_STATE_FREE_DATA,
 	LOCALITY_STATE_RENDER,
 	LOCALITY_STATE_RENDER_ABSOLUTE
 }PROGRAM_STATE;
@@ -46,6 +47,7 @@ typedef struct Project_state{
 	vSystem updateList_pre;
 	vSystem updateList;
 	vSystem updateList_post;
+	vSystem freeData;
 	vSystem renderList;
 	vSystem renderList_abs;
 	PROGRAM_STATE programState;
@@ -78,9 +80,12 @@ void SolutionLogic_update_pre();
 void SolutionLogic_update();
 void SolutionLogic_update_post();
 
+void SolutionLogic_freeData();
+
 void SolutionLogic_render();
 void SolutionLogic_render_abs();
 
+void project_systems();
 void project();
 
 // time

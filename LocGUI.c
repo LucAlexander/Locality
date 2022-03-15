@@ -56,12 +56,12 @@ void pressable_sr(SysData* sys){
 	renderBlitableV2(press->active, *pos);
 }
 
-void pressable_destroy(uint32_t eid, uint32_t cid){
-	pressable_l* trigger = getComponent(eid, cid);
+void pressable_f(SysData* sys){
+	printf("sdfsdfsdfsdfsd\n");
+	pressable_l* trigger = componentArg(sys, 0);
 	BlitableFree(&(trigger->normal));
 	BlitableFree(&(trigger->hover));
 	BlitableFree(&(trigger->press));
-	markForPurge(eid);
 }
 
 void text_l_init(text_l* txt, const char* message, uint8_t r, uint8_t g, uint8_t b, uint8_t a){

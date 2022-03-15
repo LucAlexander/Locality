@@ -8,6 +8,7 @@ struct behavior_l;
 struct repeater_l;
 
 void Blitable_sr(struct SysData* sys);
+void Blitable_f(struct SysData* sys);
 
 void forces_su(struct SysData* sys);
 void forces_applyForce(v2* left, float len, float dir);

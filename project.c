@@ -12,8 +12,6 @@ void beh(uint32_t entity){
 	uint32_t ww = getWindowW();
 	uint32_t hh = getWindowH();
 	if (pos->x > ww || pos->x < 0 || pos->y > hh || pos->y < 0){
-		Blitable* sprite = getComponent(entity, BLITABLE_C);
-		BlitableFree(sprite);
 		markForPurge(entity);
 	}
 }
@@ -79,6 +77,10 @@ void summonButton(){
 	addComponent(entity, PRESSABLE_ARG_C, &arg);
 	addComponent(entity, TEXT_C, &textNode);
 	addEntityFlag(entity, RENDER_ABSOLUTE);
+}
+
+void project_systems(){
+	
 }
 
 void project(){
