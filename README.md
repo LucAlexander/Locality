@@ -37,13 +37,17 @@ Assuming you have built the other three libraries and their containing directori
 Please note that all code was written and tested on GNU-C 11, however this project is written with compatibility in mind, and you should be able to use this for any C or C++ project, just keep in mind that you may want to keep within the GNU standard versions.
 
 ### Entry Point File
-The Makefile has a variable `PROJFILE` which defines the entry point for your specific project. either create a file with the the current assigned value as the name ( the default should be  `project.c` ), or reassign the value of `PROJFILE` to whatever you want your entry point file to be. This entry point file is the link between all your personal code and Locality. You may put anything in this file and link it to anything else, the only requirement is that this file contains a definition of the function `void project();`
+The Makefile has a variable `PROJFILE` which defines the entry point for your specific project. either create a file with the the current assigned value as the name ( the default should be  `project.c` ), or reassign the value of `PROJFILE` to whatever you want your entry point file to be. This entry point file is the link between all your personal code and Locality. You may put anything in this file and link it to anything else, the only requirement is that this file contains a definition of the function `void project();`, and a definition of the function `void project_systems();` where you may define your own logic systems.
 ```
 #include <stdio.h>
 #include "Locality.h"
 #include "LocGUI.h"
 
 ...
+
+void project_systems(){
+	
+}
 
 void project(){
 	printf("Hello World\n");
@@ -53,7 +57,7 @@ void project(){
 
 ```
 
-This function is called during the initialization state of the progam, after all build in systems modules and components have been initialized and made ready for user code to interact with them.
+Both of these functions are called during the initialization state of the progam, after all built in system modules and components have been initialized and made ready for user code to interact with them.
 
 ## Data Components
 The creation and usage of Data Components follows the documentation provided in the Entity Component System Documentation. Once a component has been created, it must be registered with the data management system in two ways. First you must update the variadic initialization function `ecsInit(uint32_t n, ...);`. The first argument represents the total number of component types which are to be registered (which is handled by an enum, you shouldn't have to touch this part), and the following arguments are the sizes in bytes of each individual component type. 
@@ -110,6 +114,7 @@ typedef enum PROGRAM_STATE{
 	LOCALITY_STATE_UPDATE_PRE,
 	LOCALITY_STATE_UPDATE,
 	LOCALITY_STATE_UPDATE_POST,
+	LOCALITY_STATE_FREE_DATA,
 	LOCALITY_STATE_RENDER,
 	LOCALITY_STATE_RENDER_ABSOLUTE
 }PROGRAM_STATE;
@@ -120,33 +125,35 @@ typedef enum PROGRAM_STATE{
 - LOCALITY_STATE_UPDATE_PRE runs at the beginning of the logical update segment of the program, this runs every logical update tick
 - LOCALITY_STATE_UPDATE is the primary logical update state of the program, this runs every logical update every tick
 - LOCALITY_STATE_UPDATE_POST runs at the end of the logical update segment of the program, this runs every logical update tick
+- LOCALITY_STATE_FREE_DATA runs after all logical updates, and deals with freeing all marked memory 
 - LOCALITY_STATE_RENDER runs when the program is rendering all changes to the screen. Rendering in this state occurs relative to the windows view port.
 - LOCALITY_STATE_RENDER_ABSOLUTE runs at the end of the programs render state. Rendering in this state occurs with absolute positioning to the window.
 
-The rendering states implement usage of the `RENDER_RELATIVE` and `RENDER_ABSOLUTE` flags in the Entity Component System `ECS_DEFAULT_FLAGS` enumerator. Which means you can denote which one you want to render to with a system filter. All systems must be registered to one of these states.
 
 ### Registering Systems
 Systems are registered to your project with `Project_registerSystem(struct System* sys, PROGRAM_STATE mode);`. Suppose you have a set of systems `pressUpdate` and `pressRender` defined as
 ```
 System pressUpdate = SystemInit(pressabe_su, 2, POSITION_C, PRESSABLE_C);
 System pressRender = SystemInit(pressabe_sr, 2, POSITION_C, PRESSABLE_C);
+System pressFree = SystemInit(pressable_f, 1, PRESSABLE_C);
 ```
 
-which respectively update and render data associated with a clickable component to a data entity. `pressUpdate` needs to be registered with `LOCALITY_STATE_UPDATE`. This is simple enough, as all we need to do is call
+which respectively update and render, and free relevant data  associated with a clickable component to a data entity. `pressUpdate` needs to be registered with `LOCALITY_STATE_UPDATE`. This is simple enough, as all we need to do is call
 ```
 Project_registerSystem(&pressUpdate, LOCALITY_STATE_UPDATE);
 ```
 
-`pressRender` needs to be registered with `LOCALITY_STATE_RENDER_ABSOLUTE` because we want it to render with absolute positioning so it remains at the same position on the screen no matter what state the system view port is in, however we dont want rendered in the standard `LOCALITY_STATE_RENDER` segment of the program to be possible. So before registering it with the project, we must add a filter for the other rendering state.
+`pressRender` needs to be registered with `LOCALITY_STATE_RENDER_ABSOLUTE` because we want it to render with absolute positioning so it remains at the same position on the screen no matter what state the system view port is in.
 ```
-SystemAddFilter(&pressRender, RENDER_RELATIVE);
-
-...
-
 Project_registerSystem(&pressRender, LOCALITY_STATE_RENDER_ABSOLUTE);
 ```
 
-Note the naming convention for the internal system functions, `_su` for logical update system and `_sr` for logical rendering system.
+finally `pressFree` must be reigistered with `LOCALITY_STATE_FREE_DATA`, note that registering a system in this state automatically applies a magnet for deactivated entities, so the system will only run on entity data which is marked for deletion with `void markForPurge(uint32_t eid);`.
+```
+Project_registerSystem(&pressFree, LOCALITY_STATE_FREE_DATA);
+```
+
+Note the naming convention for the internal system functions, `_su` for logical update system, `_sr` for logical rendering system, and `_f` for any system which frees marked memory.
 
 ## Resources
 There are build in directory references to non code resource files. Anything from fonts to images. These are defined in the preprocessor in the following manner
@@ -167,6 +174,8 @@ The base components and systems are divided up into a series of modules. Systems
 ### Base Systems
 - `void Blitable_sr(struct SysData* sys);`
 This system requires a `POSITION_C` component and a `BLITABLE_C` component. It blits the image to the screen at the given position.
+- `void Blitable_f(struct SysData* sys);`
+This system requires only a `BLITABLE_C`, of which it then frees any relevant data.
 
 - `void forces_su(struct SysData* sys);`
 This system requires a `POSITION_C` component and a `FORCES_C` component. Both are `v2` struct types. This System applies forces' x to position's x, and forces' y to position's y.
@@ -202,9 +211,9 @@ a.action = f;
 The argument for this action can be passed as a `PRESSABLE_ARC_C`, the type is `void*`.
 
 - User available function `pressable_l_init(pressable* pres, void act(void*), const char* normal, const char* hover, const char* press, uint32_t w, uint32_t h);`
-- User available function`void pressable_destroy(uint32_t eid, uint32_t cid);`
 - System `void pressable_su(struct SysData* sys);`
 - System `void pressable_sr(struct SysData* sys);`
+- System `void pressable_f(struct SysData* sys);`
 
 Both systems require a position to function as well.
 
