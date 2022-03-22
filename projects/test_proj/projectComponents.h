@@ -1,0 +1,7 @@
+#ifndef PROJECT_COMPONENTS_H
+#define PROJECT_COMPONENTS_H \
+	COMPONENT_NAME_C
+
+#define PROJECT_COMPONENT_SIZES \
+	sizeof(void*)
+#endif
