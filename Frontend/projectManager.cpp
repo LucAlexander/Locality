@@ -41,7 +41,7 @@ void ProjectManager::CreateProject(QString name){
 	dirManager.cd(dirname);
 	QFile projectFile(dirManager.path()+"/"+ projectFileStub);
 	QFile componentFile(dirManager.path()+"/"+ componentFileStub);
-	CreateProjectBaseFile(&projectFile,"//This is your projects entry point file\n#include<stdio.h>\n#include\"Locality.h\"\n#include\"LocGUI.h\"\n\nvoid project_systems(){\n\t\n}\n\nvoid project(){\n\tprintf(\"Hello World!\");\n}\n");
+	CreateProjectBaseFile(&projectFile,"//This is your projects entry point file\n#include<stdio.h>\n#include\"Locality.h\"\n#include\"LocGUI.h\"\n\nvoid project_config(Project_config* config){\n\t// Configuration code\n}\n\nvoid project_systems(){\n\t// Initialize and register project systems\n}\n\nvoid project(){\n\t// Project initialization and setup\n\tprintf(\"Hello World!\");\n}\n");
 	CreateProjectBaseFile(&componentFile,"//This is where your components go\n#ifndef PROJECT_COMPONENTS_H\n#define PROJECT_COMPONENTS_H \\\n\tCOMPONENT_NAME_C\n\n#define PROJECT_COMPONENT_SIZES \\\n\tsizeof(void*)\n#endif\n");
 	dirManager.cdUp();
 }

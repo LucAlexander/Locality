@@ -57,10 +57,6 @@ typedef struct Project_state{
 }Project_state;
 
 void Project_configInit();
-void Project_configRead();
-void Project_configParse(char* line, uint32_t len);
-void Project_configSetVariable(char* variable, char* value);
-
 void Project_stateInit();
 void Project_registerSystem(struct System* sys, PROGRAM_STATE mode);
 void Project_freeSystems();
@@ -87,6 +83,7 @@ void SolutionLogic_render_abs();
 
 void project_systems();
 void project();
+void project_config(Project_config* config);
 
 // time
 void projectTickUpdate();

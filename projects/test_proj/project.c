@@ -79,6 +79,13 @@ void summonButton(){
 	addEntityFlag(entity, RENDER_ABSOLUTE);
 }
 
+void project_config(Project_config* config){
+	config->window_w = 1366;
+	config->window_h = 768;
+	config->ticks_per_second = 60;
+	strcpy(config->window_title, "Test Project");
+}
+
 void project_systems(){
 	
 }

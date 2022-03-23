@@ -18,59 +18,8 @@ void Project_configInit(){
 	config.window_h = 360;
 	strcpy(config.window_title,"Locality Project");
 	config.ticks_per_second = 60;
-	Project_configRead();
+	project_config(&config);
 	config.tick_time = 1000/config.ticks_per_second;
-}
-
-void Project_configRead(){
-	FILE* configFile = fopen("./config.txt", "r");
-	if (configFile == NULL){
-		fclose(configFile);
-		return;
-	}
-	char line[64];
-	while(fgets(line, 64, configFile) != NULL){
-		Project_configParse(line, 64);
-	}
-	fclose(configFile);
-}
-
-void Project_configParse(char* line, uint32_t len){
-	uint32_t i;
-	char var[64] = "";
-	char val[64] = "";
-	char* c = line;
-	int32_t secondHalf = -1;
-	for (i = 0 ; i < len && *c ; ++i, ++c){
-		if (secondHalf != -1 && *c!='\n'){
-			val[secondHalf++] = *c;
-			continue;
-		}
-		if (*c=='='){
-			strncat(var,line,i);
-			secondHalf = 0;
-		}
-	}
-	Project_configSetVariable(var, val);
-}
-
-void Project_configSetVariable(char* variable, char* value){
-	if (strcmp(variable, "WINDOW_W")==0){
-		config.window_w = atoi(value);
-		return;
-	}
-	if (strcmp(variable, "WINDOW_H")==0){
-		config.window_h = atoi(value);
-		return;
-	}
-	if (strcmp(variable, "WINDOW_TITLE")==0){
-		strcpy(config.window_title,value);
-		return;
-	}
-	if (strcmp(variable, "TICKS_PER_SECOND")==0){
-		config.ticks_per_second = atoi(value);
-		return;
-	}
 }
 
 uint32_t getWindowW(){
