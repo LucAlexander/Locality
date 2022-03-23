@@ -3,7 +3,7 @@ CFLAGS=-lm
 CDEBUGFLAGS=-Wall -g
 CLIBS=-LEntity-Component-System -lEntityComponentSystem -LSDL2-Utility -lSoftUtils -lSDL2 -lSDL2main -lSDL2_ttf -lSDL2_image -LDataContainers -lDataContainers
 CFILES=Locality.c Locality.h LocGUI.c LocGUI.h LocBaseSystems.c LocBaseSystems.h LocBaseComponents.h
-PROJFILE=project.c projectComponents.h
+PROJFILE=project.c projectComponents.h 
 OUT=lp
 
 release:
@@ -14,3 +14,4 @@ debug:
 
 clean:
 	rm $(OUT)
+
