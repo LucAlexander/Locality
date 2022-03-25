@@ -53,11 +53,14 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = editor.cpp \
+		linkLabel.cpp \
 		main.cpp \
-		projectManager.cpp 
+		projectManager.cpp moc_linkLabel.cpp
 OBJECTS       = editor.o \
+		linkLabel.o \
 		main.o \
-		projectManager.o
+		projectManager.o \
+		moc_linkLabel.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -116,7 +119,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -137,7 +139,9 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		Frontend.pro editor.h \
+		linkLabel.h \
 		projectManager.h editor.cpp \
+		linkLabel.cpp \
 		main.cpp \
 		projectManager.cpp
 QMAKE_TARGET  = Frontend
@@ -209,7 +213,6 @@ Makefile: Frontend.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.con
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -289,7 +292,6 @@ Makefile: Frontend.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.con
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -325,8 +327,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents editor.h projectManager.h $(DISTDIR)/
-	$(COPY_FILE) --parents editor.cpp main.cpp projectManager.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents editor.h linkLabel.h projectManager.h $(DISTDIR)/
+	$(COPY_FILE) --parents editor.cpp linkLabel.cpp main.cpp projectManager.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -358,8 +360,14 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all:
+compiler_moc_header_make_all: moc_linkLabel.cpp
 compiler_moc_header_clean:
+	-$(DEL_FILE) moc_linkLabel.cpp
+moc_linkLabel.cpp: linkLabel.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/luc/Documents/projects/cprog/Locality/Frontend/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/luc/Documents/projects/cprog/Locality/Frontend -I/home/luc/Documents/projects/cprog/Locality/Frontend -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include linkLabel.h -o moc_linkLabel.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -372,12 +380,16 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean 
+compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean 
 
 ####### Compile
 
-editor.o: editor.cpp editor.h
+editor.o: editor.cpp editor.h \
+		linkLabel.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o editor.o editor.cpp
+
+linkLabel.o: linkLabel.cpp linkLabel.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o linkLabel.o linkLabel.cpp
 
 main.o: main.cpp projectManager.h \
 		editor.h
@@ -385,6 +397,9 @@ main.o: main.cpp projectManager.h \
 
 projectManager.o: projectManager.cpp projectManager.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o projectManager.o projectManager.cpp
+
+moc_linkLabel.o: moc_linkLabel.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_linkLabel.o moc_linkLabel.cpp
 
 ####### Install
 
