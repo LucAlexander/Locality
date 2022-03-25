@@ -3,47 +3,26 @@
 
 Locality is a (proof of concept) general purpose software development tool built to optimize program locality using a modified Entity (Data) Component System for data management. This custom software architecture promotes a separation between the programs data and logic systems in a data oriented approach to software development. 
 ## ( Please note that this Project is heavily work in progress )
-## Dependancies
-### Data Containers
-Clone [this repository](https://Github.com/LucAlexander/DataContainers) into your projects directory and use the make target `make build` to build a static library from the repositories source code.
-
-This static library provides various common data containers such as Hash Maps, Queues etc.
-
-### Entity Component System
-Clone [this repository](https://Github.com/LucAlexander/Entity-Component-System) into your projects directory and use the make target `make build` to build a static library from the repositories source code. Note that this library also depends on the Data Containers dependancy. 
-
-This static library provides the data management system.
-
-### SDL2 Wrapper
-Clone [this repository](https://Github.com/LucAlexander/SDL2-Utility) into your projects directory and use the make target `make build` to build a static library from the repositories source code, or alternatively use your own media utility of choice by reimplementing the locality source with separate graphical and input libraries.
-
-Note that if you choose to use this repository, it also requires Data Components to work.
-
-This static library provides implementation of a series of utilities necessary for the media capabilities of a software project. These include 
-- Graphical Handler
-- Font Wrapper
-- Input Event System Handler
-- Some File Utilities
-- Basic Graphical Space Math Functions
-
-If you wish to provide your own implementation in place of the SDL2 Wrapper utility, you must ensure to properly implement and replace all these components.
-
+### Modularity
+This project was build with the idea in mind that you could swap out the SDL media layer with your own, and replace the relevant functions with your own preferred functionality, while this may be a daughnting task at first, it is possible, you may just have to recompile this project from source yourself to get it to work, but it is entirely open source so use it at will.
 # Documentation
 
 ## Usage
 ### Setup
-Assuming you have built the other three libraries and their containing directories are in your projects directory, you may use the provided make file and add your own source files to the `CFILES` variable. From there you may call the `compile` make target to compile your code into an executable, or alternatively the `debug` make target to compile your project with debug symbols for use in GDB, Valgrind, etc. 
 
 Please note that all code was written and tested on GNU-C 11, however this project is written with compatibility in mind, and you should be able to use this for any C or C++ project, just keep in mind that you may want to keep within the GNU standard versions.
 
-### Entry Point File
-The Makefile has a variable `PROJFILE` which defines the entry point for your specific project. either create a file with the the current assigned value as the name ( the default should be  `project.c` ), or reassign the value of `PROJFILE` to whatever you want your entry point file to be. This entry point file is the link between all your personal code and Locality. You may put anything in this file and link it to anything else, the only requirement is that this file contains a definition of the function `void project();`, and a definition of the function `void project_systems();` where you may define your own logic systems.
+### Entry Point Files
+When you create a new project, you should be provided with two default files, you can add your own to this directory and they will be included in the projects compilation by default. The first file you are provided is `project.c` which serves as an entry point fiel for your project. This file generates as:
+
 ```
 #include <stdio.h>
 #include "Locality.h"
 #include "LocGUI.h"
 
-...
+void project_config(Project_config* config){
+	
+}
 
 void project_systems(){
 	
@@ -53,15 +32,13 @@ void project(){
 	printf("Hello World\n");
 }
 
-...
-
 ```
 
-Both of these functions are called during the initialization state of the progam, after all built in system modules and components have been initialized and made ready for user code to interact with them.
+`project()` is the setup function for all custom behavior of any specific project. This is where you create and position the initial state of your program. This runs immediately after `project_systems()`.
+`project_systems()` is where any user defined logic, destructor, or rendering systems go. These can be based on both user defined components and Locality defined components. This runs after all Locality defined components are registered. The user must also register all systems here to their appropriate program activity states.
+`project_config(Project_config* config)` is where any configuration code can be put to edit the default Locality configuration settings. This is where the window size, title, and tick update time can be edited.
 
 In addition to this file, you are provided a file `projectComponents.h` which contains a pre processor definition of two lists, `PROJECT_COMPONENTS_H` which takes the enumerated ID of whatever component you add, and `PROJECT_COMPONENT_SIZES` which takes the size in bytes of each component you add, the order of these two lists must be consistent.
-
-While you may change the name of the project file to whatever you'd lke, the name of `projectComponents.h` must remain constant.
 
 ## Data Components
 When you create a new data component type, you must register it through these lists. 
