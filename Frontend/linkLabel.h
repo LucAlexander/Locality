@@ -4,10 +4,13 @@
 #include <QWidget>
 #include <QLabel>
 
+class Editor;
+
 class LinkLabel : public QLabel{
 	Q_OBJECT
+		Editor* parentSelector;
 	public:
-		explicit LinkLabel(QWidget* parent = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags());
+		explicit LinkLabel(Editor* e, QWidget* parent = Q_NULLPTR, Qt::WindowFlags flags = Qt::WindowFlags());
 		~LinkLabel();
 	public slots:
 		void printData();

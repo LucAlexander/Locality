@@ -4,10 +4,32 @@
 #include <QPalette>
 #include <QColor>
 #include <QLabel>
+#include <QScrollArea>
+
+void Editor::addProjectLink(QString name){
+	auto* link = new LinkLabel(this);
+	link->setScaledContents(true);
+	link->setText(name);
+	QObject::connect(
+		link, &LinkLabel::clicked,
+		link, &LinkLabel::printData
+	);
+	vlayout->addWidget(link);
+}
+
+void Editor::setSelected(LinkLabel* projectLink){
+	selected = projectLink;
+}
 
 Editor::Editor(QWidget* parent):
-	QWidget(parent)
+	QWidget(parent),
+	projectlist(new QScrollArea(this)),
+	projectcontainer(new QWidget(this)),
+	vlayout(new QVBoxLayout(projectcontainer)),
+	actions(new QScrollArea(this)),
+	selected(nullptr)
 {
+
 	QPalette windowPalette;
 	QPalette contentPalette;
 
@@ -20,41 +42,43 @@ Editor::Editor(QWidget* parent):
 	setAutoFillBackground(true);
 	setPalette(windowPalette);
 
-	auto* title = new QFrame(this);
-	title->setFrameStyle(QFrame::NoFrame);
+	projectlist->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	projectlist->setPalette(contentPalette);
+	projectlist->setWidgetResizable(true);
+	projectlist->setContentsMargins(0, 0, 0, 0);
+		
+		// test segment start
+		
+		int i, n = 10;
+		for (i = 0;i<n;++i){
+			addProjectLink("one");
+			addProjectLink("two");
+			addProjectLink("three");
+			addProjectLink("four");
+			addProjectLink("five");
+			addProjectLink("six");
+			addProjectLink("seven");
+			addProjectLink("eight");
+			addProjectLink("nine");
+		}
+		// test segment end
 
-	title->setPalette(contentPalette);
+	projectlist->setWidget(projectcontainer);
+	projectlist->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-	auto* titleText = new QLabel(title);
-	titleText->setScaledContents(true);
-	titleText->setText("Locality Project Manager");
-
-	auto* projects = new QFrame(this);
-	projects->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-	projects->setPalette(contentPalette);
-
-	auto* actions = new QFrame(this);
 	actions->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	actions->setPalette(contentPalette);
+	actions->setWidgetResizable(true);
+	actions->setContentsMargins(0, 0, 0, 0);
 
-
-	// test segment start
-	
-		auto* link = new LinkLabel(this);
-		link->setScaledContents(true);
-		link->setText("Link");
-		QObject::connect(
-			link, &LinkLabel::clicked,
-			link, &LinkLabel::printData
-		);
-
-	// test segment end
+	QWidget* actioncontainer = new QWidget(this);
+	auto* actionlayout = new QVBoxLayout(actioncontainer);
+	actions->setWidget(actioncontainer);
+	actions->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
 	auto* grid = new QGridLayout(this);
-	grid->addWidget(title, 0, 0, 1, 2);
-	grid->addWidget(actions, 1, 0, 4, 1);
-	grid->addWidget(projects, 1, 1, 4, 1);
-	grid->addWidget(link, 2, 0, 1, 2);
+	grid->addWidget(actions, 0, 0, 1, 1);
+	grid->addWidget(projectlist, 0, 1, 1, 1);
 
 	setLayout(grid);
 
