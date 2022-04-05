@@ -17,7 +17,6 @@ ProjectManager::ProjectManager(QString projdir):
 	projectFileStub("project.c"),
 	componentFileStub("projectComponents.h")
 {
-	
 	CreateProjectDirectory();
 }
 
@@ -80,7 +79,7 @@ void ProjectManager::CompileProject(){
 ProjectManager::ActiveProject::ActiveProject():
 	projectName(""),
 	state(ACTIVE_PROJECT_UNINITIALIZED),
-	parentManager(NULL)
+	parentManager(nullptr)
 {}
 
 ProjectManager::ActiveProject::ActiveProject(QString pn, QDir* parent):
@@ -88,7 +87,7 @@ ProjectManager::ActiveProject::ActiveProject(QString pn, QDir* parent):
 	state(ACTIVE_PROJECT_UNINITIALIZED),
 	parentManager(parent)
 {
-	if (parentManager==NULL){
+	if (parentManager==nullptr || !parentManager->exists()){
 		return;
 	}
 	if (parentManager->exists(projectName)){

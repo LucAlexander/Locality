@@ -1,5 +1,6 @@
 #include "editor.h"
 #include "linkLabel.h"
+#include "projectManager.h"
 
 #include <QPalette>
 #include <QColor>
@@ -21,15 +22,26 @@ void Editor::setSelected(LinkLabel* projectLink){
 	selected = projectLink;
 }
 
+void Editor::openProject(){
+	if (selected != nullptr){
+		manager->SelectProject(selected->text());
+	}
+}
+
+void Editor::closeProject(){
+	manager->DeselectProject();
+	selected = nullptr;
+}
+
 Editor::Editor(QWidget* parent):
 	QWidget(parent),
 	projectlist(new QScrollArea(this)),
 	projectcontainer(new QWidget(this)),
 	vlayout(new QVBoxLayout(projectcontainer)),
 	actions(new QScrollArea(this)),
-	selected(nullptr)
+	selected(nullptr),
+	manager(new ProjectManager())
 {
-
 	QPalette windowPalette;
 	QPalette contentPalette;
 
@@ -51,7 +63,7 @@ Editor::Editor(QWidget* parent):
 		
 		int i, n = 10;
 		for (i = 0;i<n;++i){
-			addProjectLink("one");
+			addProjectLink("test_proj");
 			addProjectLink("two");
 			addProjectLink("three");
 			addProjectLink("four");
