@@ -59,21 +59,7 @@ Editor::Editor(QWidget* parent):
 	projectlist->setWidgetResizable(true);
 	projectlist->setContentsMargins(0, 0, 0, 0);
 		
-		// test segment start
-		
-		int i, n = 10;
-		for (i = 0;i<n;++i){
-			addProjectLink("test_proj");
-			addProjectLink("two");
-			addProjectLink("three");
-			addProjectLink("four");
-			addProjectLink("five");
-			addProjectLink("six");
-			addProjectLink("seven");
-			addProjectLink("eight");
-			addProjectLink("nine");
-		}
-		// test segment end
+	manager->SeekProjects(this);
 
 	projectlist->setWidget(projectcontainer);
 	projectlist->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);

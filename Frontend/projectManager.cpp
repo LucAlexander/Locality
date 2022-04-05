@@ -1,4 +1,5 @@
 #include "projectManager.h"
+#include "editor.h"
 
 #include <QTextStream>
 #include <QStringList>
@@ -74,6 +75,18 @@ void ProjectManager::CompileProject(){
 		return;
 	}
 	project.compile();
+}
+
+void ProjectManager::SeekProjects(Editor* menu){
+	if (project.state != ACTIVE_PROJECT_UNINITIALIZED){
+		return;
+	}
+	QStringList projectFolders = dirManager.entryList(QDir::Dirs);
+	for (QString dir : projectFolders){
+		if (dir.contains("_proj")){
+			menu->addProjectLink(dir);
+		}
+	}
 }
 
 ProjectManager::ActiveProject::ActiveProject():

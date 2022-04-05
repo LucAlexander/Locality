@@ -10,8 +10,6 @@ LinkLabel::LinkLabel(Editor* e, QWidget* parent, Qt::WindowFlags flag):
 LinkLabel::~LinkLabel(){}
 
 void LinkLabel::printData(){
-	QTextStream out(stdout);
-	out << "hello world" << Qt::endl;
 	parentSelector->setSelected(this);
 }
 

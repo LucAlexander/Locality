@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QFile>
 
+class Editor;
+
 class ProjectManager{
 	public:
 		ProjectManager();
@@ -14,6 +16,7 @@ class ProjectManager{
 		void SelectProject(QString name);
 		void DeselectProject();
 		void CompileProject();
+		void SeekProjects(Editor* menu);
 	private:
 		enum ACTIVE_PROJECT_STATE{
 			ACTIVE_PROJECT_UNINITIALIZED,
