@@ -4,6 +4,8 @@
 class LinkLabel;
 class ProjectManager;
 
+void compileSelectedProject(void*);
+
 class Editor : public QWidget{
 	public:
 		Editor(QWidget* parent = nullptr);

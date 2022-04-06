@@ -1,6 +1,7 @@
 #include "editor.h"
 #include "linkLabel.h"
 #include "projectManager.h"
+#include "functionalButton.h"
 
 #include <QPalette>
 #include <QColor>
@@ -20,6 +21,7 @@ void Editor::addProjectLink(QString name){
 
 void Editor::setSelected(LinkLabel* projectLink){
 	selected = projectLink;
+	manager->SelectProject(selected->text());//TODO this is a test
 }
 
 void Editor::openProject(){
@@ -31,6 +33,11 @@ void Editor::openProject(){
 void Editor::closeProject(){
 	manager->DeselectProject();
 	selected = nullptr;
+}
+
+void compileSelectedProject(void* t){
+	ProjectManager* manager = (ProjectManager*)t;
+	manager->CompileProject();
 }
 
 Editor::Editor(QWidget* parent):
@@ -73,6 +80,11 @@ Editor::Editor(QWidget* parent):
 	auto* actionlayout = new QVBoxLayout(actioncontainer);
 	actions->setWidget(actioncontainer);
 	actions->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+	FButton* compile = new FButton("Compile", this);
+	compile->setArg(manager);
+	compile->setFunction(compileSelectedProject);
+	actionlayout->addWidget(compile);
 
 	auto* grid = new QGridLayout(this);
 	grid->addWidget(actions, 0, 0, 1, 1);

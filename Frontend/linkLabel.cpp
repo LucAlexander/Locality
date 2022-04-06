@@ -1,6 +1,5 @@
 #include "linkLabel.h"
 #include "editor.h"
-#include <QTextStream>
 
 LinkLabel::LinkLabel(Editor* e, QWidget* parent, Qt::WindowFlags flag):
 	QLabel(parent),
