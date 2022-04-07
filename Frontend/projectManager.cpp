@@ -1,5 +1,6 @@
 #include "projectManager.h"
 #include "editor.h"
+#include "linkLabel.h"
 
 #include <QTextStream>
 #include <QStringList>
@@ -54,11 +55,22 @@ void ProjectManager::CreateProjectBaseFile(QFile* file, const QString message){
 }
 
 void ProjectManager::DeleteProject(QString name){
+	if (!dirManager.exists(name)){
+		name += projectStub;
+	}
+	if (!dirManager.exists(name)){
+		return;
+	}
 	dirManager.cd(name);
+	if (!dirManager.exists()){
+		dirManager.cdUp();
+		return;
+	}
 	dirManager.removeRecursively();
 }
 
 void ProjectManager::SelectProject(QString name){
+	DeselectProject();
 	project = ActiveProject(name, &dirManager);
 	if (project.good()){
 		dirManager.cd(name);
@@ -66,8 +78,10 @@ void ProjectManager::SelectProject(QString name){
 }
 
 void ProjectManager::DeselectProject(){
-	dirManager.cdUp();
-	project.state = ACTIVE_PROJECT_UNINITIALIZED;
+	if (project.state != ACTIVE_PROJECT_UNINITIALIZED){
+		dirManager.cdUp();
+		project.state = ACTIVE_PROJECT_UNINITIALIZED;
+	}
 }
 
 void ProjectManager::CompileProject(){
@@ -82,8 +96,15 @@ void ProjectManager::SeekProjects(Editor* menu){
 		return;
 	}
 	QStringList projectFolders = dirManager.entryList(QDir::Dirs);
+	std::vector<LinkLabel*> children = menu->getChildLinks();
+	QStringList names;
+	uint32_t i;
+	for (i = 0;i<children.size();++i){
+		QString name = children[i]->text();
+		names.append(name);
+	}
 	for (QString dir : projectFolders){
-		if (dir.contains("_proj")){
+		if (dir.contains(projectStub)&&!names.contains(dir)){
 			menu->addProjectLink(dir);
 		}
 	}
