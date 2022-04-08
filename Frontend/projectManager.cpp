@@ -67,6 +67,7 @@ void ProjectManager::DeleteProject(QString name){
 		return;
 	}
 	dirManager.removeRecursively();
+	dirManager.cdUp();
 }
 
 void ProjectManager::SelectProject(QString name){
@@ -96,15 +97,9 @@ void ProjectManager::SeekProjects(Editor* menu){
 		return;
 	}
 	QStringList projectFolders = dirManager.entryList(QDir::Dirs);
-	std::vector<LinkLabel*> children = menu->getChildLinks();
-	QStringList names;
-	uint32_t i;
-	for (i = 0;i<children.size();++i){
-		QString name = children[i]->text();
-		names.append(name);
-	}
+	menu->clearvbox();
 	for (QString dir : projectFolders){
-		if (dir.contains(projectStub)&&!names.contains(dir)){
+		if (dir.contains(projectStub)){
 			menu->addProjectLink(dir);
 		}
 	}

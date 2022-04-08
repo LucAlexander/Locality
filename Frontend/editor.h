@@ -3,7 +3,6 @@
 
 #include <QtWidgets>
 #include <QString>
-#include <vector>
 
 class LinkLabel;
 class ProjectManager;
@@ -25,16 +24,15 @@ class Editor : public QWidget{
 		void setSelected(LinkLabel* projectLink);
 		void openProject();
 		void closeProject();
-		std::vector<LinkLabel*> getChildLinks();
 		LinkLabel* selected;
 		deleteParameter* delpar;
+		void clearvbox();
 	private:
 		QScrollArea* projectlist;
 		QWidget* projectcontainer;
 		QVBoxLayout* vlayout;
 		QScrollArea* actions;
 		ProjectManager* manager;
-		std::vector<LinkLabel*> links;
 
 };
 

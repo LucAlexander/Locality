@@ -18,7 +18,6 @@ void Editor::addProjectLink(QString name){
 		link, &LinkLabel::printData
 	);
 	vlayout->addWidget(link);
-	links.push_back(link);
 }
 
 void Editor::setSelected(LinkLabel* projectLink){
@@ -46,23 +45,42 @@ void createNewProject(void* t){
 	deleteParameter* args = (deleteParameter*)t;
 	ProjectManager* manager = args->manager;
 	Editor* edit = args->editor;
-	QString projectName = "Unnamed-Project";
-	//QInputDialog* getName = new QInputDialog();
-	//getName->setLabelText("Project Name: ");
-	//getName->setTextValue(projectName);
-	//projectName = getName->textValue();
+	bool good;
+	QString projectName = QInputDialog::getText(0, "Input Project Name", "Name: ", QLineEdit::Normal, "", &good);
+	if (!good){
+		return;
+	}
+	if (projectName.isEmpty()){
+		projectName = "Unnamed-Project";
+	}
 	manager->CreateProject(projectName);
 	manager->SeekProjects(edit);
-	//delete getName;
-	//getName = nullptr;
 }
 
 void deleteSelectedProject(void* t){
 	deleteParameter* args = (deleteParameter*)t;
 	ProjectManager* manager = args->manager;
 	Editor* edit = args->editor;
+	if (edit->selected==nullptr){
+		return;
+	}
+	QString targetProjectName = edit->selected->text();
+	edit->selected = nullptr;
 	manager->DeselectProject();
-	manager->DeleteProject(edit->selected->text());
+	manager->DeleteProject(targetProjectName);
+	manager->SeekProjects(edit);
+}
+
+
+void Editor::clearvbox(){
+	QLayoutItem* child;
+	while(vlayout->count()!=0){
+		child = vlayout->takeAt(0);
+		if(child->widget() != 0){
+			delete child->widget();
+		}
+		delete child;
+	}
 }
 
 Editor::Editor(QWidget* parent):
@@ -107,23 +125,16 @@ Editor::Editor(QWidget* parent):
 	actions->setWidget(actioncontainer);
 	actions->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-	/*
-	FButton* compile = new FButton("Compile", this);
-	compile->setArg(manager);
-	compile->setFunction(compileSelectedProject);
-	actionlayout->addWidget(compile);
-	*/
-
 	FButton* createButton = new FButton("Create Project", this);
-	//FButton* deleteButton = new FButton("Delete Project", this);
+	FButton* deleteButton = new FButton("Delete Project", this);
 	delpar->manager = manager;
 	delpar->editor = this;
 	createButton->setArg(delpar);
-	//deleteButton->setArg(delpar);
+	deleteButton->setArg(delpar);
 	createButton->setFunction(createNewProject);
-	//deleteButton->setFunction(deleteSelectedProject);
+	deleteButton->setFunction(deleteSelectedProject);
 	actionlayout->addWidget(createButton);
-	//actionlayout->addWidget(deleteButton);
+	actionlayout->addWidget(deleteButton);
 
 	auto* grid = new QGridLayout(this);
 	grid->addWidget(actions, 0, 0, 1, 1);
@@ -133,8 +144,4 @@ Editor::Editor(QWidget* parent):
 
 	resize(960, 720);
 	setWindowTitle("Editor");
-}
-
-std::vector<LinkLabel*> Editor::getChildLinks(){
-	return links;
 }
