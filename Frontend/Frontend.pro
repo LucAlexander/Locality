@@ -14,10 +14,19 @@ INCLUDEPATH += .
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-HEADERS += editor.h functionalButton.h linkLabel.h projectManager.h
+HEADERS += editor.h \
+	functionalButton.h \
+       	linkLabel.h \
+	projectManager.h \
+	TextEditor/filemanage.h \
+	TextEditor/textarea.h
+
 SOURCES += editor.cpp \
-           functionalButton.cpp \
-           linkLabel.cpp \
-           main.cpp \
-           projectManager.cpp
+	functionalButton.cpp \
+	linkLabel.cpp \
+	main.cpp \
+	projectManager.cpp \
+	TextEditor/filemanage.cpp \ 
+	TextEditor/textarea.cpp
+
 QT += core gui widgets

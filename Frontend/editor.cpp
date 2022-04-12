@@ -9,6 +9,8 @@
 #include <QScrollArea>
 #include <QInputDialog>
 
+#include "TextEditor/textEditorComponent.h"
+
 void Editor::addProjectLink(QString name){
 	auto* link = new LinkLabel(this);
 	link->setScaledContents(true);
@@ -28,12 +30,18 @@ void Editor::setSelected(LinkLabel* projectLink){
 }
 
 void Editor::openProject(){
-	//TODO
+	TextLauncher::OpenProject();
 }
 
 void Editor::closeProject(){
 	manager->DeselectProject();
 	selected = nullptr;
+}
+
+void openSelectedProject(void* t){
+	deleteParameter* args = (deleteParameter*)t;
+	Editor* edit = args->editor;
+	edit->openProject();
 }
 
 void compileSelectedProject(void* t){
@@ -127,14 +135,18 @@ Editor::Editor(QWidget* parent):
 
 	FButton* createButton = new FButton("Create Project", this);
 	FButton* deleteButton = new FButton("Delete Project", this);
+	FButton* openButton = new FButton("Open Project", this);
 	delpar->manager = manager;
 	delpar->editor = this;
 	createButton->setArg(delpar);
 	deleteButton->setArg(delpar);
+	openButton->setArg(delpar);
 	createButton->setFunction(createNewProject);
 	deleteButton->setFunction(deleteSelectedProject);
+	openButton->setFunction(openSelectedProject);
 	actionlayout->addWidget(createButton);
 	actionlayout->addWidget(deleteButton);
+	actionlayout->addWidget(openButton);
 
 	auto* grid = new QGridLayout(this);
 	grid->addWidget(actions, 0, 0, 1, 1);

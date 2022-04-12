@@ -11,6 +11,7 @@ class Editor;
 void compileSelectedProject(void*);
 void createNewProject(void*);
 void deleteSelectedProject(void*);
+void openSelectedProject(void*);
 
 struct deleteParameter{
 	ProjectManager* manager;
