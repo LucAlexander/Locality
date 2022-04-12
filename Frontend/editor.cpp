@@ -9,8 +9,6 @@
 #include <QScrollArea>
 #include <QInputDialog>
 
-#include "TextEditor/textEditorComponent.h"
-
 void Editor::addProjectLink(QString name){
 	auto* link = new LinkLabel(this);
 	link->setScaledContents(true);
@@ -30,7 +28,11 @@ void Editor::setSelected(LinkLabel* projectLink){
 }
 
 void Editor::openProject(){
-	TextLauncher::OpenProject();
+	if (textEditorFrame == nullptr){
+		return;
+	}
+	// TODO project open intialization
+	textEditorFrame->show();
 }
 
 void Editor::closeProject(){
@@ -91,6 +93,10 @@ void Editor::clearvbox(){
 	}
 }
 
+void Editor::setTextEditor(QWidget* frame){
+	textEditorFrame = frame;
+}
+
 Editor::Editor(QWidget* parent):
 	QWidget(parent),
 	selected(nullptr),
@@ -99,13 +105,15 @@ Editor::Editor(QWidget* parent):
 	projectcontainer(new QWidget(this)),
 	vlayout(new QVBoxLayout(projectcontainer)),
 	actions(new QScrollArea(this)),
-	manager(new ProjectManager())
+	manager(new ProjectManager()),
+	textEditorFrame(nullptr)
 {
+
 	QPalette windowPalette;
 	QPalette contentPalette;
 
-	QColor backgroundColor(28, 27, 25);
-	QColor contentColor(252, 232, 195);
+	QColor backgroundColor(75, 71, 92);
+	QColor contentColor(215, 222, 230);
 
 	windowPalette.setColor(QPalette::Window, backgroundColor);
 	contentPalette.setColor(QPalette::WindowText, contentColor);

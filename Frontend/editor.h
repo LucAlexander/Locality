@@ -28,12 +28,14 @@ class Editor : public QWidget{
 		LinkLabel* selected;
 		deleteParameter* delpar;
 		void clearvbox();
+		void setTextEditor(QWidget* frame);
 	private:
 		QScrollArea* projectlist;
 		QWidget* projectcontainer;
 		QVBoxLayout* vlayout;
 		QScrollArea* actions;
 		ProjectManager* manager;
+		QWidget* textEditorFrame;
 
 };
 
