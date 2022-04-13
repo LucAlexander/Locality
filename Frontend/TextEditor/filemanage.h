@@ -14,10 +14,9 @@ class Tab : public QTabWidget{
 	Q_OBJECT
 	public:
 		Tab();
+		TextArea* myTextArea;
 	private slots:
 		void createNewTab();
-	private:
-		TextArea* myTextArea ;
 };
 
 class FileManage:public QWidget{
@@ -34,7 +33,7 @@ class FileManage:public QWidget{
 		QFile* activeFile ;
 		bool checkExtension(QFile *f);
 		QString text;
-		const QString fileextension[10] = {"txt","html","css","java","cpp","h","py","php","js","xml"};
+		const QString fileextension[12] = {"txt","html","css","java","cpp","c","hpp","h","py","php","js","xml"};
 };
 
 #endif

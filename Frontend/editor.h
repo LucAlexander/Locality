@@ -7,6 +7,7 @@
 class LinkLabel;
 class ProjectManager;
 class Editor;
+class Tab;
 
 void compileSelectedProject(void*);
 void createNewProject(void*);
@@ -28,7 +29,7 @@ class Editor : public QWidget{
 		LinkLabel* selected;
 		deleteParameter* delpar;
 		void clearvbox();
-		void setTextEditor(QWidget* frame);
+		void setTextEditor(QWidget* frame, Tab* tabs);
 	private:
 		QScrollArea* projectlist;
 		QWidget* projectcontainer;
@@ -36,7 +37,7 @@ class Editor : public QWidget{
 		QScrollArea* actions;
 		ProjectManager* manager;
 		QWidget* textEditorFrame;
-
+		Tab* tabs;
 };
 
 

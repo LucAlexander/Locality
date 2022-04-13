@@ -8,7 +8,7 @@
 Tab::Tab(){
 	this->setTabsClosable(true);
 	myTextArea = new TextArea();
-	this->addTab(myTextArea,"unnamed");
+	this->addTab(myTextArea,"project.c");
 }
 
 void Tab::createNewTab(){

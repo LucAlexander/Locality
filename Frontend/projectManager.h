@@ -17,6 +17,8 @@ class ProjectManager{
 		void DeselectProject();
 		void CompileProject();
 		void SeekProjects(Editor* menu);
+		bool projectSelected();
+		QString getSelectedProjectFile();
 	private:
 		enum ACTIVE_PROJECT_STATE{
 			ACTIVE_PROJECT_UNINITIALIZED,

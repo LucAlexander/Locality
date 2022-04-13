@@ -7,6 +7,10 @@ TextArea::TextArea(){}
 
 void TextArea::OpenFile(){
 	QString fileurl = QFileDialog::getOpenFileName(this,"Choose one  files", "", "*");
+	OpenSpecificFile(fileurl);
+}
+
+void TextArea::OpenSpecificFile(QString fileurl){
 	if(fileurl.length()!=0){
 		QFile *activeFile = new QFile(fileurl);
 		if(checkExtension(activeFile)){
@@ -25,7 +29,8 @@ void TextArea::OpenFile(){
 			QMessageBox::critical(this,"Cannot read File","Extention not valid");
 		}
 	}
-}
+
+} 
 
 void TextArea::SaveFile(){
 	if(!currentFile){

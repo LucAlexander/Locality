@@ -9,6 +9,7 @@ class TextArea:public QPlainTextEdit{
 	Q_OBJECT
 	public:
 		TextArea();
+		void OpenSpecificFile(QString fileurl);
 
 	private slots:
 		void OpenFile();
@@ -17,7 +18,7 @@ class TextArea:public QPlainTextEdit{
 		bool checkExtension(QFile *f);
 
 		QFile *currentFile = nullptr ;
-		const QString fileextension[10] = {"txt","html","css","java","cpp","h","py","php","js","xml"};
+		const QString fileextension[12] = {"txt","html","css","java","cpp","c","hpp","h","py","php","js","xml"};
 };
 
 #endif

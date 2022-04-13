@@ -22,6 +22,14 @@ ProjectManager::ProjectManager(QString projdir):
 	CreateProjectDirectory();
 }
 
+QString ProjectManager::getSelectedProjectFile(){
+	return "../projects/"+project.projectName+"/"+"project.c";
+}
+
+bool ProjectManager::projectSelected(){
+	return project.state != ACTIVE_PROJECT_UNINITIALIZED;
+}
+
 void ProjectManager::CreateProjectDirectory(){
 	if (!dirManager.exists(projectDir)){
 		dirManager.mkdir(projectDir);

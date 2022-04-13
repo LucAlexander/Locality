@@ -2,6 +2,7 @@
 #include "linkLabel.h"
 #include "projectManager.h"
 #include "functionalButton.h"
+#include "TextEditor/filemanage.h"
 
 #include <QPalette>
 #include <QColor>
@@ -30,8 +31,11 @@ void Editor::setSelected(LinkLabel* projectLink){
 void Editor::openProject(){
 	if (textEditorFrame == nullptr){
 		return;
+	}	
+	if (!manager->projectSelected()){
+		return;
 	}
-	// TODO project open intialization
+	tabs->myTextArea->OpenSpecificFile(manager->getSelectedProjectFile());
 	textEditorFrame->show();
 }
 
@@ -93,8 +97,9 @@ void Editor::clearvbox(){
 	}
 }
 
-void Editor::setTextEditor(QWidget* frame){
+void Editor::setTextEditor(QWidget* frame, Tab* t){
 	textEditorFrame = frame;
+	tabs = t;
 }
 
 Editor::Editor(QWidget* parent):
@@ -106,7 +111,8 @@ Editor::Editor(QWidget* parent):
 	vlayout(new QVBoxLayout(projectcontainer)),
 	actions(new QScrollArea(this)),
 	manager(new ProjectManager()),
-	textEditorFrame(nullptr)
+	textEditorFrame(nullptr),
+	tabs(nullptr)
 {
 
 	QPalette windowPalette;

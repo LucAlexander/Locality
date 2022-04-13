@@ -52,7 +52,7 @@ int main(int argc, char** argv){
 		//********
 		Edit->addAction("Copy all Text");
 		Edit->addAction("Copy");
-		Edit->addAction("Coller");
+		Edit->addAction("Paste");
 		Edit->addSeparator();
 		Edit->addAction("New Tab");
 		//****
@@ -86,16 +86,7 @@ int main(int argc, char** argv){
 		//adding root layout*****************
 		frame->setLayout(Vlayout);
 
-	window.setTextEditor(frame);
+	window.setTextEditor(frame, Tabs);
 	window.show();
 	return app.exec();
-
-	ProjectManager pm;
-	pm.SelectProject("test_proj");
-	pm.CompileProject();
-
-	return 0;
-
-
-
 }
