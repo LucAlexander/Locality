@@ -8,6 +8,10 @@ int main(int argc, char** argv){
 		manager.makeTarget = "make debug";
 		manager.SelectProject(argv[2]);
 	}
+	else if (strcmp(argv[1], "-w")==0){
+		manager.makeTarget = "make release-windows";
+		manager.SelectProject(argv[2]);
+	}
 	else{
 		manager.SelectProject(argv[1]);
 	}
