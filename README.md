@@ -1,3 +1,6 @@
+# NOTE
+This development tool was a proof of concept implementation of a cache friendly software architecture. After seeing that it worked, I restarted it from scratch knowing the pitfalls, intending to develop this tool more properly and without the time constraint of a university semester project. The repository currently contains everything you need to run it. Dont trust all of the documentation anymore, its old. The repo of the improved version of this tool is [here](https://Github.com/LucAlexander/Xi/).
+
 # Locality
 ![](https://github.com/LucAlexander/Locality/blob/master/Locality.png)
 

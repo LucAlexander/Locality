@@ -1,13 +1,7 @@
 *.o
 *.qmake.stash
-*.a
-Frontend/Frontend
-DataContainers/README.md
-Entity-Component-System/ECS.png
-Entity-Component-System/README.md
 Frontend/VLC.sh
 plot.py
-cmp
 performance_log.txt
 projects/blender_proj/
 projects/cancelations_proj/
